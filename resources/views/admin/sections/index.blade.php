@@ -4,12 +4,14 @@
 
 @section('content')
 <div class="sections-container">
+
     <!-- Header -->
     <div class="page-header">
         <h1>Sections</h1>
         <button id="addSectionBtn" class="btn btn-header"
             data-store-route="{{ route('sections.store') }}"
-            data-search-route="{{ route('sections.search') }}">
+            data-search-route="{{ route('sections.search') }}"
+            data-update-route="{{ route('sections.update', ':id') }}">
             + Add Section
         </button>
     </div>
@@ -24,6 +26,7 @@
         <thead>
             <tr>
                 <th>Section Name</th>
+                <th>Code</th>
                 <th>Department</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -33,6 +36,7 @@
             @foreach($sections as $section)
             <tr>
                 <td>{{ $section->section_name }}</td>
+                <td>{{ $section->section_code }}</td>
                 <td>{{ $section->department->department_name ?? '-' }}</td>
                 <td>
                     <div class="status-toggle-wrapper">
@@ -45,6 +49,7 @@
                     <button class="btn btn-edit editSectionBtn"
                         data-section-id="{{ $section->section_id }}"
                         data-name="{{ $section->section_name }}"
+                        data-code="{{ $section->section_code }}"
                         data-department="{{ $section->department_id }}"
                         data-active="{{ $section->is_active }}">
                         Edit
@@ -56,7 +61,7 @@
     </table>
 
     <p class="note">
-        <strong>Note:</strong> Editing is for misspellings or typos only. If a section has changed, add a new one.
+        <strong>Note:</strong> Editing is for typos only. To change a section, add a new one.
     </p>
 </div>
 

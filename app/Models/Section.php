@@ -16,6 +16,7 @@ class Section extends Model
 
     protected $fillable = [
         'section_name',
+        'section_code',
         'department_id',
         'is_active'
     ];

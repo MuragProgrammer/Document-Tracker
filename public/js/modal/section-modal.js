@@ -5,28 +5,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.getElementById('addSectionBtn');
     const form = modal.querySelector('#sectionForm');
     const submitBtn = modal.querySelector('#sectionModalSubmitBtn');
+
     const nameInput = modal.querySelector('#modal_section_name');
+    const codeInput = modal.querySelector('#modal_section_code');
     const departmentSelect = modal.querySelector('#modal_department_id');
     const statusInput = modal.querySelector('#modal_is_active');
     const sectionIdInput = modal.querySelector('#section_id');
     const modalTitle = modal.querySelector('#sectionModalTitle');
     const cancelBtns = modal.querySelectorAll('.modal-close');
 
-    const validity = { name: false, department: false };
+    const validity = { name: false, code: false, department: false };
 
     const updateSubmitState = () => {
-        submitBtn.disabled = !validity.name || !departmentSelect.value;
+        submitBtn.disabled = !validity.name || !validity.code || !departmentSelect.value;
     };
 
     const resetInputs = () => {
-        [nameInput, departmentSelect].forEach(input => {
+        [nameInput, codeInput, departmentSelect].forEach(input => {
             input.classList.remove('valid', 'invalid');
-            const feedback = input.parentElement.querySelector('.input-feedback, .input-feedback-department');
+            const feedback = input.parentElement.querySelector('.input-feedback, .input-feedback-code, .input-feedback-department');
             if (feedback) feedback.textContent = '';
         });
         Object.keys(validity).forEach(key => validity[key] = false);
         updateSubmitState();
     };
+
+    const setUppercase = (input) => { input.value = input.value.toUpperCase(); };
 
     const setupStatusToggle = (checkbox) => {
         const wrapper = checkbox.closest('.status-toggle-wrapper');
@@ -67,11 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data) {
             sectionIdInput.value = data.section_id || '';
             nameInput.value = data.section_name || '';
+            codeInput.value = data.section_code || '';
             departmentSelect.value = data.department_id || '';
             statusInput.updateStatus(data.is_active === '1' || data.is_active === 1 || data.is_active === true);
             setMethodInput(method);
             form.action = actionUrl || form.action;
+
             validity.name = true;
+            validity.code = true;
             validity.department = true;
         } else {
             sectionIdInput.value = '';
@@ -90,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cancelBtns.forEach(btn => btn.addEventListener('click', closeModal));
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
     addBtn.addEventListener('click', () => openModal('Add Section'));
 
     // Edit buttons
@@ -98,22 +106,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const section = {
                 section_id: btn.dataset.sectionId,
                 section_name: btn.dataset.name,
+                section_code: btn.dataset.code,
                 department_id: btn.dataset.department,
                 is_active: btn.dataset.active
             };
-            openModal('Edit Section', section, 'PUT', `/sections/${section.section_id}`);
+            const actionUrl = addBtn.dataset.updateRoute.replace(':id', section.section_id);
+            openModal('Edit Section', section, 'PUT', actionUrl);
         });
     });
 
-    // Optional: uniqueness validator
+    codeInput.addEventListener('input', () => setUppercase(codeInput));
+
+    // ------------------- Validators -------------------
     if (window.validateUniqueAndSuggest) {
+        const csrfToken = form.querySelector('input[name="_token"]').value;
+
         window.validateUniqueAndSuggest({
             input: nameInput,
             table: 'sections',
             column: 'section_name',
             fieldKey: 'name',
-            csrfToken: form.querySelector('input[name="_token"]').value,
+            csrfToken: csrfToken,
             feedbackClass: 'input-feedback',
+            endpoint: addBtn.dataset.searchRoute,
+            validity: validity,
+            updateSubmitState: updateSubmitState
+        });
+
+        window.validateUniqueAndSuggest({
+            input: codeInput,
+            table: 'sections',
+            column: 'section_code',
+            fieldKey: 'code',
+            csrfToken: csrfToken,
+            feedbackClass: 'input-feedback-code',
             endpoint: addBtn.dataset.searchRoute,
             validity: validity,
             updateSubmitState: updateSubmitState

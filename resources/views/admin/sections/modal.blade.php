@@ -1,3 +1,4 @@
+{{-- Section Modal --}}
 <div id="sectionModal" class="modal-overlay hidden">
     <div class="modal-content">
         <h2 id="sectionModalTitle">Add Section</h2>
@@ -11,6 +12,13 @@
                 <label>Section Name <span class="required">*</span></label>
                 <input type="text" id="modal_section_name" name="section_name" placeholder="Enter section name" required>
                 <div class="input-feedback"></div>
+            </div>
+
+            <!-- Section Code -->
+            <div class="form-group">
+                <label>Section Code <span class="required">*</span></label>
+                <input type="text" id="modal_section_code" name="section_code" placeholder="Enter section code" required>
+                <div class="input-feedback-code"></div>
             </div>
 
             <!-- Department -->

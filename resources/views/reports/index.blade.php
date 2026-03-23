@@ -157,7 +157,7 @@
             <div class="cards-row">
                 @php
                     $cards = [
-                        ['title'=>'Pending Receipt','value'=>$cardCounts['pending_receipt'],'class'=>'pending-receipt','icon'=>'bi-clock-history'],
+                        ['title'=>'Pending','value'=>$cardCounts['pending_receipt'],'class'=>'pending-receipt','icon'=>'bi-clock-history'],
                         ['title'=>'Under Review','value'=>$cardCounts['pending_review'],'class'=>'pending-review','icon'=>'bi-hourglass-split'],
                         ['title'=>'Completed','value'=>$cardCounts['completed'],'class'=>'completed','icon'=>'bi-check2-square'],
                         ['title'=>'Reopened','value'=>$cardCounts['returned'],'class'=>'returned','icon'=>'bi-arrow-return-left'],
