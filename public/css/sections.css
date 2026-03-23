@@ -1,0 +1,47 @@
+
+/* Add Section Button */
+.btn-add-section {
+    position: absolute;
+    right: 32px;
+    top: 173px;
+    background-color: #3B5B8A;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 12px;
+    padding: 12px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-add-section:hover {
+    background-color: #2E4466;
+}
+
+
+/* Badges */
+.badge-enabled {
+    background-color: #B1E4B9;
+    color: #222;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 14px;
+}
+
+.badge-disabled {
+    background-color: #BBBDC0;
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 14px;
+}
+
+
+/* Modal Customization */
+.modal-content {
+    border-radius: 12px;
+    padding: 20px;
+}

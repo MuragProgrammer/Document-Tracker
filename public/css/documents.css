@@ -1,0 +1,572 @@
+.document-card label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.document-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px 40px;
+}
+
+/* Apply to all inputs, textarea, and select */
+.document-card input,
+.document-card select,
+.document-card textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #D9D9D9;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Select with arrow */
+.document-card select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+/* Focus effect for inputs and select */
+.document-card input:focus,
+.document-card select:focus,
+.document-card textarea:focus {
+    outline: none;
+    border-color: #318BF2;
+}
+
+/* Textarea specific */
+.document-card textarea {
+    resize: none;
+}
+
+/* =================================
+   TWO COLUMN DOCUMENT LAYOUT
+================================= */
+
+.two-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* Column wrapper */
+.document-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Column title */
+.document-column h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--main-color);
+    margin-bottom: 6px;
+}
+
+/* Empty table message */
+.empty-table {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+/* =================================
+   DOCUMENT LIST PAGE
+================================= */
+.document-tracker {
+    width: 100%;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 36px;
+    font-weight: 600;
+}
+
+/* ================= FILTERS / SEARCH FORM ================= */
+.filters {
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto 32px auto;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.search-form input[type="text"] {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.search-form input[type="text"]::placeholder {
+    color: #9ca3af;
+}
+
+.search-form input[type="text"]:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 4px rgba(41, 72, 177, 0.1);
+}
+
+.search-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    padding: 12px 40px 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-form select:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 4px rgba(41, 72, 177, 0.1);
+}
+
+/* Hide the submit button */
+.search-form button[type="submit"] {
+    display: none;
+}
+
+/* Table */
+.document-table {
+    border: 1px solid var(--main-color);
+    overflow: hidden;
+    background: white;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+}
+
+.table-header,
+.table-row {
+    display: flex;
+    align-items: center;
+    min-width: 700px;
+}
+
+.document-table .table-header {
+    padding-top: 5px;
+    background: var(--main-color);
+    font-weight: 600;
+    font-size: 15px;
+    color: white;
+}
+
+.document-table .col {
+    padding: 8px;
+    flex: 1;
+    font-size: 12px;
+    text-align: center;
+}
+
+.table-row {
+    border-top: 1px solid #B3B3B3;
+}
+
+.table-row:nth-child(even) {
+    background: #F9F9F9;
+}
+
+.table-row:hover {
+    background: #F1F5F9;
+}
+
+.status.created {
+    background-color: #abf19f;
+    color: #37bd37;
+}
+.status.pending {
+    background-color: #ffd5ab;
+    color: #db8121;
+}
+.status.reopended {
+    background-color: #F1CA9F;
+    color: #BD8937;
+}
+.status.end {
+    background-color: #f19f9f;
+    color: #bd3737;
+}
+.status.reopened {
+    background-color: #9fcbf1;
+    color: var(--main-color);
+}
+
+.status.forwarded {
+    background-color: #BBE1FF;
+    color: #2B628E;
+}
+
+.status.under {
+    background-color: #bbc3ff;
+    color: #2b358e;
+}
+
+.status.completed {
+    background-color: #BEE8C0;
+    color: #36A926;
+}
+
+/* Action */
+.view-btn {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: var(--main-color);
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.view-btn:hover {
+    background-color: #1F6ED5;
+}
+
+/* =================================
+   ADD DOCUMENT PAGE
+================================= */
+.add-document-container {
+    width: 966px;
+    margin: 0 auto;
+    font-family: 'Montserrat', sans-serif;
+}
+
+h2 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+/* Optional text */
+.optional {
+    font-size: 13px;
+    color: #555;
+}
+
+/* File input */
+input[type="file"] {
+    padding: 6px;
+}
+
+/* Actions */
+.form-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-primary { background-color: #318BF2; border: none; }
+.btn-cancel { background-color: #4E6B97; text-decoration: none; }
+
+.btn-primary:hover {
+    background-color: #1F6ED5;
+}
+
+.btn-cancel:hover {
+    background-color: #3B557A;
+}
+
+/* Disabled select */
+select[disabled],
+input[readonly] {
+    background-color: #F9F9F9;
+    color: #777;
+    cursor: not-allowed;
+}
+/* =================================
+   COLUMN FILTERS (PER COLUMN SEARCH)
+================================= */
+
+/* Hide all tab contents by default */
+.tab-content {
+    display: none;
+}
+
+/* Show only active tab */
+.tab-content.active {
+    display: block;
+}
+.column-filter {
+    width: 100%;
+}
+
+.column-filter form {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.column-filter input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.column-filter input[type="text"]::placeholder {
+    color: #9ca3af;
+}
+
+.column-filter input[type="text"]:focus {
+    border-color: #318BF2;
+    box-shadow: 0 0 0 3px rgba(49, 139, 242, 0.1);
+}
+
+.column-filter select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    background: #fff url("data:image/svg+xml,%3Csvg fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat;
+
+    background-position: right 10px center;
+    background-size: 14px;
+
+    padding: 10px 36px 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.column-filter select:focus {
+    border-color: #318BF2;
+    box-shadow: 0 0 0 3px rgba(49, 139, 242, 0.1);
+}
+/* =========================
+   TABS STYLE
+========================= */
+.tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid var(--main-color);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    background-color: #fff;
+    color: var(--main-color);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-btn:hover {
+    background-color: rgba(11, 72, 116, 0.1);
+}
+
+.tab-btn.active {
+    background-color: var(--main-color);
+    color: #fff;
+    border-bottom: 2px solid var(--main-color);
+}
+
+/* =========================
+   DOCUMENT PAGE RESPONSIVE CSS
+========================= */
+
+/* ======= Tablet: ≤1024px ======= */
+@media (max-width: 1024px) {
+    /* Stack columns */
+    .two-column-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Adjust column titles */
+    .document-column h2 {
+        font-size: 20px;
+    }
+
+    /* Filters / search stack */
+    .filters {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-form {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .search-form input[type="text"],
+    .search-form select {
+        width: 100%;
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .view-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+}
+
+/* ======= Mobile: ≤768px ======= */
+@media (max-width: 768px) {
+
+    /* Hide table header and stack rows */
+    .document-table {
+        display: block;
+        overflow-x: hidden;
+    }
+
+    .column-filter form {
+        flex-direction: column;
+    }
+
+    .column-filter input,
+    .column-filter select {
+        width: 100%;
+    }
+
+    .table-header {
+        display: none;
+    }
+
+    .table-row {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #B3B3B3;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        padding: 10px;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .table-row .col {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        text-align: left;
+        font-size: 12px;
+        white-space: normal;
+    }
+
+    /* My Handled Documents – Dynamic labels */
+    .my-documents .table-row .col:nth-child(1)::before { content: "Doc No.: "; font-weight: 500; }
+    .my-documents .table-row .col:nth-child(2)::before { content: "Name: "; font-weight: 500; }
+    .my-documents .table-row .col:nth-child(3)::before { content: "Type: "; font-weight: 500; }
+    .my-documents .table-row .col:nth-child(4)::before { content: "Current Section: "; font-weight: 500; }
+    .my-documents .table-row .col:nth-child(5)::before { content: "Original Holder: "; font-weight: 500; }
+    .my-documents .table-row .col:nth-child(6)::before { content: "Status: "; font-weight: 500; }
+    .my-documents .table-row .col:nth-child(7)::before { content: "Action: "; font-weight: 500; }
+
+    /* Forwarded Documents – Dynamic labels */
+    .forwarded-documents .table-row .col:nth-child(1)::before { content: "Doc No.: "; font-weight: 500; }
+    .forwarded-documents .table-row .col:nth-child(2)::before { content: "Name: "; font-weight: 500; }
+    .forwarded-documents .table-row .col:nth-child(3)::before { content: "Type: "; font-weight: 500; }
+    .forwarded-documents .table-row .col:nth-child(4)::before { content: "Current Section: "; font-weight: 500; }
+    .forwarded-documents .table-row .col:nth-child(5)::before { content: "From Section: "; font-weight: 500; }
+    .forwarded-documents .table-row .col:nth-child(6)::before { content: "Status: "; font-weight: 500; }
+    .forwarded-documents .table-row .col:nth-child(7)::before { content: "Time: "; font-weight: 500; }
+    .forwarded-documents .table-row .col:nth-child(8)::before { content: "Action: "; font-weight: 500; }
+
+    /* Adjust buttons */
+    .view-btn {
+        margin-top: 6px;
+        align-self: flex-start;
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+}
+
+/* ======= Extra small: ≤480px ======= */
+@media (max-width: 480px) {
+    .document-column h2 {
+        font-size: 16px;
+    }
+
+    .table-row .col {
+        font-size: 11px;
+        padding: 3px 0;
+    }
+
+    .view-btn {
+        padding: 3px 5px;
+        font-size: 10px;
+    }
+
+    .status {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+
+    .filters, .search-form input, .search-form select {
+        font-size: 12px;
+        width: 100%;
+    }
+
+    .header h1 {
+        font-size: 28px;
+    }
+
+    .btn-header {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}

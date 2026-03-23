@@ -1,0 +1,303 @@
+/* ================= CONTAINER ================= */
+.document-view-container {
+    width: 100%;
+    padding: 1rem 2.5rem;
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+}
+
+/* ================= TITLE ================= */
+.document-view-container h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.document-number {
+    font-size: 14px;
+    color: #6b6b6b;
+    margin-bottom: 2rem;
+}
+
+/* ================= DOCUMENT INFO BOX ================= */
+.document-info-box {
+    background: #fff;
+    border: 1px solid #C5BFBF;
+    border-radius: 14px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    transition: 0.3s ease;
+}
+
+.document-info-box:hover {
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.document-info-box h2 {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px 20px;
+    margin: 0;
+    background: linear-gradient(to right, #F7F2F2, #ffffff);
+    border-bottom: 1px solid #E5E5E5;
+}
+
+/* Grid */
+.document-info-box .grid {
+    padding: 22px;
+    display: grid;
+    grid-template-columns: 300px 300px 1fr;
+    row-gap: 16px;
+    column-gap: 30px;
+}
+
+.document-info-box p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.document-info-box p.font-medium {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.doc-no{grid-area: 1 / 1 ;}
+.doc-name{grid-area: 2 / 1 ;}
+.doc-type{grid-area: 3 / 1 ;}
+.org-section{grid-area: 4 / 1 ;}
+.cur-section{grid-area: 1 / 2 ;}
+.doc-date{grid-area: 2 / 2 ;}
+.created{grid-area: 3 / 2;}
+.doc-status{grid-area: 4 / 2 ;}
+
+.doc-att {
+    grid-area: 1 / 3 / 4 / 5 ;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.doc-files {
+    font-size: 0.8rem;
+}
+
+.doc-file-link {
+    display: block;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.doc-file-link:hover {
+    text-decoration: underline;
+}
+
+.doc-att .doc-avatar {
+    width: 190px;
+    max-width: 320px;
+    height: 250px;
+    object-fit: contain;
+    border-radius: 6px;
+    border: 1px solid #C5BFBF;
+    background-color: #fff;
+}
+
+.doc-att .no-files{
+    text-align: center;
+    font-size: 24px;
+    color: gray;
+}
+
+/* ================= STATUS ================= */
+.status {
+    flex: 1;
+    display: inline-block;
+    text-align: center;
+    padding: 5px 8px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+/* ================= BUTTONS ================= */
+.document-action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 2rem;
+}
+
+.document-action-buttons button {
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.document-action-buttons .accept { background-color: #22C55E; }
+.document-action-buttons .forward { background-color: #3B82F6; }
+.document-action-buttons .end-cycle,
+.document-action-buttons .reopen { background-color: #06B6D4; }
+.document-action-buttons .delete { background-color: #d40621; }
+
+/* Hover effects */
+.document-action-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+.document-action-buttons button:active {
+    transform: scale(0.97);
+}
+
+/* ================= TRACKING HISTORY ================= */
+.tracking-history {
+    border: 1px solid #C5BFBF;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+/* Header */
+.tracking-title {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px 20px;
+    margin: 0;
+    background: linear-gradient(to right, #F7F2F2, #ffffff);
+    border-bottom: 1px solid #E5E5E5;
+}
+
+/* ================= TABLE ================= */
+.tracking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tracking-table thead {
+    background-color: #f3f4f6;
+}
+
+.tracking-table th {
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    color: #555;
+}
+
+.tracking-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-top: 1px solid #eee;
+    transition: background 0.2s ease;
+}
+
+.tracking-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Empty row */
+.empty-row {
+    text-align: center;
+    padding: 1.5rem;
+    color: #6b7280;
+}
+
+/* ================= MODAL ================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(197, 191, 191, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal-content {
+    width: 640px;
+    background: #ffffff;
+    border-radius: 16px;
+    position: relative;
+    padding: 32px;
+    padding-bottom: 120px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 20px;
+    color: #545454;
+    margin-bottom: 20px;
+}
+
+.modal-label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #545454;
+    margin-top: 20px;
+}
+
+.modal-input {
+    width: 100%;
+    border: 1px solid #B3B3B3;
+    border-radius: 12px;
+    background: #F7F2F2;
+    font-size: 16px;
+    padding: 12px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.modal-textarea {
+    width: 100%;
+    border: 1px solid #B3B3B3;
+    border-radius: 12px;
+    background: #F7F2F2;
+    font-size: 16px;
+    padding: 12px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    height: 123px;
+    resize: none;
+}
+
+.modal-actions {
+    position: static;
+    bottom: 28px;
+    right: 28px;
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.modal-confirm {
+    background: #318BF2;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 12px;
+    padding: 8px 22px;
+    border: none;
+}
+
+.modal-cancel {
+    background: #E9E9E9;
+    color: #474444;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 12px;
+    padding: 8px 22px;
+    border: 1px solid #DDDDDD;
+}

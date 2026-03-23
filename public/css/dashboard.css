@@ -1,0 +1,362 @@
+
+.dashboard-container {
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.dashboard-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  box-sizing: border-box;
+  position: relative;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: #1f2937;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: black;
+}
+
+/* Top bar */
+.top-bar {
+  flex: 1;
+  width: 100%;
+  background: #F0EFF6;
+  padding: 40px 60px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.top-bar-title {
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 30px;
+}
+
+.user-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #404040;
+  position: absolute;
+  top: 53px;
+  right: 97px;
+}
+
+/* Cards*/
+.cards-container {
+  padding: 32px 0;
+}
+
+/* Card */
+.card {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0px 4px 4px rgba(0,0,0,0.25),
+              0px 0px 6px rgba(0,0,0,0.25);
+  color: white;
+  box-sizing: border-box;
+  min-height: 150px;
+}
+
+/* Icon on the left */
+.card-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  margin-right: 16px;
+}
+.card-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+/* Info (title + value) next to icon */
+.card-info {
+  display: flex;
+  padding: 10px 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+  min-height: 34px;
+}
+
+.card-value {
+    padding-bottom: 15px;
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+  justify-self: center;
+}
+
+.dashboard-cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+}
+
+/* Card colors */
+.card.pending-review {
+    background: #D5E0F3;
+    color: #195879;
+}
+.card.completed {
+    background: #E0EBE3;
+    color: #045115;
+}
+.card.pending-receipt {
+    background: #FBAC46;
+}
+.card.returned {
+    background: #318BF2;
+}
+.card.cancelled {
+    background: rgba(212,39,39,0.71);
+}
+.card.total-documents {
+    background: #14AE5C;
+}
+
+/* ============================= */
+/* Recent Documents Container */
+/* ============================= */
+.recent-documents-container {
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #B3B3B3;
+    margin-top: 32px;
+}
+
+
+/* Header row */
+.recent-documents-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #D1D5DB;
+    padding-bottom: 8px;
+}
+
+.recent-documents-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.view-all a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #318BF2;
+    text-decoration: none;
+}
+.view-all a:hover {
+    text-decoration: underline;
+}
+
+/* Search container */
+.recent-dashboard-container .search-container {
+    margin: 20px auto;
+    -webkit-overflow-scrolling: touch;
+}
+.dashboard-table{
+    border: 1px solid var(--main-color);
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    word-wrap: break-word;
+}
+.dashboard-table th,
+.dashboard-table td {
+    padding: 10px;                 /* consistent padding */
+    font-size: 14px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;           /* ellipsis for overflow text */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Table header styling */
+.dashboard-table thead th {
+    background: var(--main-color);
+    color: white;
+    font-weight: 600;
+}
+
+/* Table rows */
+.dashboard-table tbody tr:hover {
+    background-color: rgba(49, 139, 242, 0.05);
+}
+
+/* Status badges */
+.status-cell {
+    display: flex;
+    max-width: 100px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5px 10px;
+}
+
+.status.under-review { background: rgba(161,199,242,0.55); color: #1F78DE; }
+.status.pending-receipt { background: #F1CA9F; color: #B98633; }
+.status.completed { background: #BEE8C0; color: #36A926; }
+.status.returned { background: #DCBFEF; color: #A859B4; }
+.status.cancelled { background: #F8A1A1; color: #D94B3E; }
+
+/* Empty row */
+.document-table td.empty {
+    text-align: center;
+    color: #888;
+}
+
+
+/* Large tablets / small laptops */
+@media (max-width: 1200px) {
+  .cards-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+  .cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+
+  .dashboard-container {
+    padding: 0 15px;
+  }
+
+  /* Header */
+  .dashboard-header {
+    padding: 15px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-header h1 {
+    font-size: 18px;
+  }
+
+  /* Cards */
+  .cards-container {
+    padding: 20px 0;
+  }
+
+  .cards-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .card {
+    min-height: 120px;
+    padding: 14px;
+  }
+
+  .card-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .card-value {
+    font-size: 28px;
+    padding-bottom: 5px;
+  }
+
+  /* Allow horizontal scrolling */
+  .recent-documents-container {
+      overflow-x: auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+  }
+
+  /* Let table expand as needed */
+  .document-table {
+      min-width: 700px;
+      table-layout: auto;
+  }
+
+  /* Shrink font for mobile */
+  .document-table thead th,
+  .document-table tbody td {
+      font-size: 12px;
+      padding: 8px;
+  }
+
+  /* Optional: make status badges smaller */
+  .status-cell {
+      font-size: 11px;
+      max-width: 80px;
+      padding: 4px 6px;
+  }
+
+  /* Reduce search box width */
+  .recent-documents-container .search-container {
+      margin: 10px 0;
+  }
+}
+
+
+/* Small laptops (1366px and below) */
+@media (max-width: 1366px) {
+
+    .recent-documents-container {
+        padding: 15px;
+    }
+
+    .document-table thead th {
+        font-size: 13px;
+        padding: 10px 10px;
+    }
+
+    .document-table tbody td {
+        font-size: 13px;
+        padding: 8px 8px;
+    }
+
+    .status-cell {
+        max-width: 90px;
+        font-size: 12px;
+    }
+
+}

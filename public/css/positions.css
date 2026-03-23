@@ -1,0 +1,33 @@
+/* ================= CONTROLS ================= */
+
+.controls {
+    margin-bottom: 30px;
+}
+
+.add-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #1f3c88, var(--main-color));
+    color: #fff;
+    padding: 11px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 18px rgba(41, 72, 177, 0.25);
+    transition: all 0.25s ease;
+}
+
+.add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(41, 72, 177, 0.35);
+}
+
+

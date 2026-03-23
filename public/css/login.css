@@ -1,0 +1,189 @@
+
+/* Full-page background */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    height: 100%;
+    width: 100%;
+    background-image: url('../images/login-bg.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Login box */
+.login-box {
+    background-color: rgba(255, 255, 255, 0.9);
+    margin-right: 10%;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    max-width: 400px;
+    width: 100%;
+}
+
+.login-box h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.error-message {
+    background-color: #fdd;
+    color: #a00;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.forgot-password {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.forgot-password a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+ /* Wrapper for input + icon */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: #555;
+        }
+
+        .input-wrapper input {
+            padding-left: 35px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Optional: adjust input height and icon size */
+        .input-wrapper input {
+            height: 40px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .input-wrapper svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ===============================
+   RESPONSIVE DESIGN
+=============================== */
+
+/* Tablet */
+@media (max-width: 992px) {
+    .login-box {
+        width: 90%;
+        padding: 35px 30px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .login-box {
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 25px 20px;
+        box-sizing: border-box;
+    }
+
+    .login-box h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    .input-wrapper input {
+        font-size: 14px;
+        height: 40px;
+    }
+
+    button {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .forgot-password {
+        font-size: 13px;
+    }
+}

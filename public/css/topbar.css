@@ -1,0 +1,103 @@
+
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    font-family: Montserrat, sans-serif;
+    font-size: 20px;
+    color: #1F2937;
+}
+
+.breadcrumb-link {
+    text-decoration: none;
+    color: #1F2937;
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    margin-right: 5px;
+    color: #6B7280;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
+    color: #1F2937;
+}
+
+.topbar-avatar {
+    width: 61px;
+    height: 61px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 10px;
+}
+
+
+/* Topbar Sections */
+.topbar-left, .topbar-center, .topbar-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Left: Dashboard */
+.topbar-left .topbar-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #4C708D;
+}
+
+/* Center: Documents */
+.topbar-center .topbar-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: black;
+    margin-right: 8px;
+}
+
+.topbar-center .topbar-arrow {
+    width: 12px;
+    height: 7px;
+    background-color: #79747E;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+/* Right: Admin */
+
+.topbar-right .topbar-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: black;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+    .sidebar, .content-wrapper {
+        width: 100%;
+    }
+    .topbar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 20px;
+    }
+    .topbar-left, .topbar-center, .topbar-right {
+        justify-content: center;
+        width: 100%;
+        margin: 5px 0;
+    }
+}

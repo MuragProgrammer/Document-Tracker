@@ -1,0 +1,151 @@
+
+
+.sidebar {
+    height: 100vh;
+    background-color: var(--main-color);
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER */
+.sidebar-header {
+    height: 126px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+}
+
+.logo-icon {
+    width: 50px;
+    height: 65px;
+    margin-right: 10px;
+    background-image: url('/images/icons/file-text-fill.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.logo-text .logo-title {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.logo-text .logo-subtitle {
+    font-size: 20px;
+    color: #A3B0CB;
+}
+
+/* NAVIGATION */
+.sidebar-nav {
+    padding: 20px 10px;
+    flex: 1;
+}
+
+.nav-item, .nav-group-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 8px 0;
+    transition: all 0.3s ease;
+}
+
+.nav-item .icon , .nav-group-title .group-icon , .nav-item small .icon , .logout-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    margin-left: 10px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: transparent;
+}
+
+.nav-item.small {
+    font-size: 12px;
+    margin-left: 40px;
+}
+
+.nav-item:hover {
+    opacity: 0.8;
+}
+
+/* SUB NAV */
+.sub-nav {
+    margin-left: 50px;
+    margin-bottom: 30px;
+}
+
+.sub-nav a {
+    display: block;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+/* GROUP */
+.nav-group-title .group-text {
+    display: inline-block;
+}
+
+/* FOOTER */
+.sidebar-footer {
+    padding: 30px 40px;
+}
+
+.sidebar-footer hr {
+    border: none;
+    border-top: 1px solid white;
+    margin-bottom: 25px;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+}
+
+
+/* Hover highlight for all main nav items and group titles */
+.nav-item:hover,
+.nav-group-title:hover,
+.config-dropdown .nav-item:hover {
+    opacity: 0.8;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-group-title:hover {
+    opacity: 0.8;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.after-icon {
+    display: inline-flex;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.after-icon svg {
+    width: 14px;
+    height: 14px;
+    color: #555;
+}
