@@ -30,9 +30,10 @@
 
                     <select name="my_status">
                         <option value="">All Status</option>
+                        <option value="CREATED" {{ request('my_status')=='CREATED'?'selected':'' }}>Created</option>
                         <option value="PENDING" {{ request('my_status')=='PENDING'?'selected':'' }}>Pending</option>
                         <option value="FORWARDED" {{ request('my_status')=='FORWARDED'?'selected':'' }}>Forwarded</option>
-                        <option value="END OF CYCLE" {{ request('my_status')=='END OF CYCLE'?'selected':'' }}>Completed</option>
+                        <option value="END OF CYCLE" {{ request('my_status')=='END OF CYCLE'?'selected':'' }}>End of Cycle</option>
                     </select>
 
                     <input type="hidden" name="col_1" value="{{ $col1 }}">
@@ -50,8 +51,8 @@
             <div class="tabs">
                 <a href="{{ route('documents.index', array_merge(request()->all(), ['col_1'=>'handled'])) }}"
                    class="tab-btn {{ $col1=='handled'?'active':'' }}">Handled Documents</a>
-                <a href="{{ route('documents.index', array_merge(request()->all(), ['col_1'=>'created'])) }}"
-                   class="tab-btn {{ $col1=='created'?'active':'' }}">My Created Documents</a>
+                <a href="{{ route('documents.index', array_merge(request()->all(), ['col_1'=>'my'])) }}"
+                   class="tab-btn {{ $col1=='my'?'active':'' }}">My  Documents</a>
             </div>
 
             {{-- TAB: HANDLED --}}
@@ -63,7 +64,7 @@
                         <div class="col">Type</div>
                         <div class="col">Current Section</div>
                         <div class="col">Original Holder</div>
-                        <div class="col">Date Created</div>
+                        <div class="col">Date </div>
                         <div class="col">Status</div>
                         <div class="col">Action</div>
                     </div>
@@ -90,15 +91,15 @@
                 </div>
             </div>
 
-            {{-- TAB: CREATED --}}
-            <div class="tab-content {{ $col1=='created'?'active':'' }}" id="created">
+            {{-- TAB:  --}}
+            <div class="tab-content {{ $col1=='my'?'active':'' }}" id="my">
                 <div class="document-table">
                     <div class="table-header">
                         <div class="col">Doc No.</div>
                         <div class="col">Document Name</div>
                         <div class="col">Type</div>
                         <div class="col">Current Section</div>
-                        <div class="col">Date Created</div>
+                        <div class="col">Date </div>
                         <div class="col">Status</div>
                         <div class="col">Action</div>
                     </div>
@@ -116,7 +117,7 @@
                             </div>
                         </div>
                     @empty
-                        <div class="empty-table">No created documents.</div>
+                        <div class="empty-table">No  documents.</div>
                     @endforelse
                 </div>
                 <div class="pagination-container">
@@ -141,7 +142,7 @@
                         <option value="">All Status</option>
                         <option value="PENDING" {{ request('all_status')=='PENDING'?'selected':'' }}>Pending</option>
                         <option value="FORWARDED" {{ request('all_status')=='FORWARDED'?'selected':'' }}>Forwarded</option>
-                        <option value="END OF CYCLE" {{ request('all_status')=='END OF CYCLE'?'selected':'' }}>Completed</option>
+                        <option value="END OF CYCLE" {{ request('all_status')=='END OF CYCLE'?'selected':'' }}>End of Cycle</option>
                     </select>
 
                     <input type="hidden" name="col_2" value="{{ $col2 }}">
@@ -217,7 +218,7 @@
                         <div class="col">Type</div>
                         <div class="col">Current Section</div>
                         <div class="col">Original Holder</div>
-                        <div class="col">Date Created</div>
+                        <div class="col">Date </div>
                         <div class="col">Status</div>
                     </div>
 

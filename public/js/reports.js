@@ -1,6 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    const { labels, counts, sectionNames, sectionChartData, trendLabels, trendCounts } = window.REPORTS;
+    const {
+        labels = [],
+        counts = [],
+        sectionNames = [],
+        sectionChartData = [],
+        trendLabels = [],
+        trendCounts = []
+    } = window.REPORTS || {};
 
     // -----------------------------
     // FIX: Convert counts object → array
@@ -11,19 +18,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Colors (MATCH labels exactly)
     // -----------------------------
     const baseColors = [
-        '#3b82f6', // Draft (CREATED)
-        '#f59e0b', // Pending
-        '#8b5cf6', // Under Review
-        '#22c55e', // Completed
-        '#ef4444'  // Reopened
+        '#fbac46', // Pending
+        '#2b358e', // Under Review
+        '#bd3737', // End of Cycle
+        '#318BF2'  // Reopened
     ];
 
     const sectionColors = {
-        "Draft": "#3b82f6",
-        "Pending": "#f59e0b",
-        "Under Review": "#8b5cf6",
-        "Completed": "#22c55e",
-        "Reopened": "#ef4444"
+        "Pending": "#fbac46",
+        "Under Review": "#2b358e",
+        "End": "#bd3737",
+        "Reopened": "#318BF2"
     };
 
     // -----------------------------
@@ -143,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "Draft": "CREATED",
         "Pending": "PENDING",
         "Under Review": "UNDER REVIEW",
-        "Completed": "END OF CYCLE",
+        "End of Cycle": "END OF CYCLE",
         "Reopened": "REOPENED"
     };
 

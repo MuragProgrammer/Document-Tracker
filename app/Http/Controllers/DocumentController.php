@@ -235,7 +235,7 @@ class DocumentController extends Controller
         // --- Generate PDF ---
            $pdf = app(\Barryvdh\DomPDF\PDF::class)->loadView('documents.pdf', [
                 'document_number' => $document_number,
-                'document_name'   => $request->document_name, // add this line
+                'document_name'   => $request->document_name,
                 'created_at'      => now()->format('F j, Y'),
                 'owner_name'      => $user->full_name,
             ]);
@@ -303,85 +303,85 @@ class DocumentController extends Controller
         return view('documents.view', compact('document', 'sections'));
     }
 
-public function performAction(Request $request, Document $doc)
-{
-    $request->validate([
-        'action_type' => 'required|string|in:Accept,Forward,End Cycle,Reopen',
-        'remarks'     => 'nullable|string|max:500',
-        'section_id'  => 'nullable|exists:sections,section_id', // only for Forward
-    ]);
+    public function performAction(Request $request, Document $doc)
+    {
+        $request->validate([
+            'action_type' => 'required|string|in:Accept,Forward,End Cycle,Reopen',
+            'remarks'     => 'nullable|string|max:500',
+            'section_id'  => 'nullable|exists:sections,section_id', // only for Forward
+        ]);
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    // If forwarding, section_id is required
-    if ($request->action_type === 'Forward' && !$request->section_id) {
-        return back()->withErrors(['section_id' => 'You must select a section to forward the document.']);
+        // If forwarding, section_id is required
+        if ($request->action_type === 'Forward' && !$request->section_id) {
+            return back()->withErrors(['section_id' => 'You must select a section to forward the document.']);
+        }
+
+        // Map UI actions to DB ENUM values
+        $actionMap = [
+            'Accept'     => 'RECEIVED',
+            'Forward'    => 'FORWARDED',
+            'End Cycle'  => 'END OF CYCLE',
+            'Reopen'     => 'REOPEN',
+        ];
+
+        $statusMap = [
+            'Accept'     => 'UNDER REVIEW', // document status
+            'Forward'    => 'PENDING',
+            'End Cycle'  => 'END OF CYCLE',
+            'Reopen'     => 'REOPENED',
+        ];
+
+        $dbActionType = $actionMap[$request->action_type];
+        $newStatus    = $statusMap[$request->action_type];
+
+        // Default remarks based on action
+        $actionLabels = [
+            'Accept' => 'Received',
+            'Forward' => 'Forwarded',
+            'End Cycle' => 'Ended',
+            'Reopen' => 'Reopened',
+        ];
+        // Use custom remarks if provided, otherwise use default
+        $remarks = $request->filled('remarks')
+            ? $request->remarks
+            : $actionLabels[$request->action_type] . " by {$user->full_name}";
+
+        DocumentAction::create([
+            'doc_id'          => $doc->doc_id,
+            'section_id'      => $request->section_id ?? $doc->current_section_id,
+            'position_id'     => $user->position_id,
+            'user_id'         => $user->user_id,
+            'action_type'     => $dbActionType,
+            'remarks'         => $remarks,
+            'action_datetime' => now(),
+        ]);
+
+        // Update document status and current holder
+        $updateData = [
+            'status' => $newStatus,
+        ];
+
+        if ($request->action_type === 'Forward') {
+            $updateData['current_section_id'] = $request->section_id;
+
+            // Assign next holder
+            $nextHolder = \App\Models\User::where('section_id', $request->section_id)
+                ->where('is_active', 1)
+                ->orderBy('role')
+                ->first();
+
+            $updateData['current_holder_id'] = $nextHolder ? $nextHolder->user_id : $doc->current_holder_id;
+        } else {
+            $updateData['current_holder_id'] = $user->user_id;
+        }
+
+        $doc->update($updateData);
+
+        return redirect()->route('documents.show', $doc->doc_id)
+                        ->with('success', 'Action performed successfully!');
     }
-
-    // Map UI actions to DB ENUM values
-    $actionMap = [
-        'Accept'     => 'RECEIVED',
-        'Forward'    => 'FORWARDED',
-        'End Cycle'  => 'END OF CYCLE',
-        'Reopen'     => 'REOPEN',
-    ];
-
-    $statusMap = [
-        'Accept'     => 'UNDER REVIEW', // document status
-        'Forward'    => 'PENDING',
-        'End Cycle'  => 'END OF CYCLE',
-        'Reopen'     => 'REOPENED',
-    ];
-
-    $dbActionType = $actionMap[$request->action_type];
-    $newStatus    = $statusMap[$request->action_type];
-
-    // Default remarks based on action
-    $actionLabels = [
-        'Accept' => 'Received',
-        'Forward' => 'Forwarded',
-        'End Cycle' => 'Ended',
-        'Reopen' => 'Reopened',
-    ];
-    // Use custom remarks if provided, otherwise use default
-    $remarks = $request->filled('remarks')
-        ? $request->remarks
-        : $actionLabels[$request->action_type] . " by {$user->full_name}";
-
-    DocumentAction::create([
-        'doc_id'          => $doc->doc_id,
-        'section_id'      => $request->section_id ?? $doc->current_section_id,
-        'position_id'     => $user->position_id,
-        'user_id'         => $user->user_id,
-        'action_type'     => $dbActionType,
-        'remarks'         => $remarks,
-        'action_datetime' => now(),
-    ]);
-
-    // Update document status and current holder
-    $updateData = [
-        'status' => $newStatus,
-    ];
-
-    if ($request->action_type === 'Forward') {
-        $updateData['current_section_id'] = $request->section_id;
-
-        // Assign next holder
-        $nextHolder = \App\Models\User::where('section_id', $request->section_id)
-            ->where('is_active', 1)
-            ->orderBy('role')
-            ->first();
-
-        $updateData['current_holder_id'] = $nextHolder ? $nextHolder->user_id : $doc->current_holder_id;
-    } else {
-        $updateData['current_holder_id'] = $user->user_id;
-    }
-
-    $doc->update($updateData);
-
-    return redirect()->route('documents.show', $doc->doc_id)
-                     ->with('success', 'Action performed successfully!');
-}
 
     public function destroy($doc)
     {

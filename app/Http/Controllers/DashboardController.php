@@ -14,12 +14,10 @@ class DashboardController extends Controller
         // Card Counts
         // -------------------------
         $cardCounts = [
-            'draft'           => Document::where('status', 'CREATED')->count(),
             'pending_receipt' => Document::where('status', 'PENDING')->count(),
             'pending_review'  => Document::where('status', 'UNDER REVIEW')->count(),
-            'completed'       => Document::where('status', 'END OF CYCLE')->count(),
-            'returned'        => Document::where('status', 'REOPENED')->count(),
-            'cancelled'       => Document::where('is_active', 0)->count(),
+            'end'       => Document::where('status', 'END OF CYCLE')->count(),
+            'reopened'        => Document::where('status', 'REOPENED')->count(),
             'total_documents' => Document::count(),
         ];
 

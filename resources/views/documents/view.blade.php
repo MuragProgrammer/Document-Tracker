@@ -3,67 +3,65 @@
 @section('content')
 <div class="document-view-container">
 
-    {{-- Page Title --}}
-    <h1>Document Details (Tracking View)</h1>
-
-    {{-- Document Number --}}
-    <p class="document-number">{{ $document->document_number }}</p>
-
     {{-- Document Info Box --}}
     <div class="document-info-box">
         <h2>Document Details</h2>
 
         <div class="grid">
             <div class="doc-att">
+
                 @php
                     $preview = $document->attachments->first();
+                    $attachments = $document->attachments->slice(1); // remove preview from list
                 @endphp
 
-                {{-- PREVIEW --}}
-                @if ($preview)
-                    @if (str_starts_with($preview->file_type, 'image'))
-                        {{-- IMAGE PREVIEW --}}
-                        <img
-                            src="{{ asset('storage/' . $preview->file_path) }}"
-                            alt="{{ $preview->file_original_name }}"
-                            class="doc-avatar"
-                        >
+{{-- PREVIEW (BIG) --}}
+<div class="preview-card">
+    @if ($preview)
+        @if (str_starts_with($preview->file_type, 'image'))
+            <img
+                src="{{ asset('storage/' . $preview->file_path) }}"
+                alt="{{ $preview->file_original_name }}"
+            >
+        @elseif ($preview->file_type === 'application/pdf')
+            <div class="pdf-wrapper scrollable">
+                <embed
+                    src="{{ asset('storage/' . $preview->file_path) }}#page=1&zoom=FitH&toolbar=0"
+                    type="application/pdf"
+                />
+                <!-- Invisible overlay link -->
+                <a href="{{ asset('storage/' . $preview->file_path) }}" target="_blank" class="pdf-overlay-link"></a>
+            </div>
+        @else
+            <div class="file-card big">FILE</div>
+        @endif
+    @endif
+</div>
 
-                    @elseif ($preview->file_type === 'application/pdf')
-                        {{-- PDF FIRST PAGE PREVIEW --}}
-                        <embed
-                            src="{{ asset('storage/' . $preview->file_path) }}#page=1&zoom=FitH"
-                            type="application/pdf"
-                            class="doc-avatar"
-                        />
-
-                    @else
-                        {{-- FALLBACK --}}
-                        <img
-                            src="{{ asset('images/file-placeholder.png') }}"
-                            alt="File preview"
-                            class="doc-avatar"
-                        >
-                    @endif
-                @else
-                @endif
-
-                {{-- FILE LIST --}}
-                @if ($document->attachments->count())
-                    <div class="doc-files">
-                        @foreach ($document->attachments as $attachment)
-                            <a
-                                href="{{ asset('storage/' . $attachment->file_path) }}"
-                                target="_blank"
-                                class="doc-file-link"
-                            >
-                                📎 {{ $attachment->file_original_name }}
-                            </a>
-                        @endforeach
-                    </div>
-                @else
+                {{-- ATTACHMENTS GRID --}}
+                @forelse ($attachments as $attachment)
+                    <a
+                        href="{{ asset('storage/' . $attachment->file_path) }}"
+                        target="_blank"
+                        class="gallery-card"
+                    >
+                        @if (str_starts_with($attachment->file_type, 'image'))
+                            <img src="{{ asset('storage/' . $attachment->file_path) }}">
+                        @elseif ($attachment->file_type === 'application/pdf')
+                            <div class="pdf-preview">
+                                <embed
+                                    src="{{ asset('storage/' . $attachment->file_path) }}#page=1&zoom=FitH&toolbar=0"
+                                    type="application/pdf"
+                                />
+                            </div>
+                        @else
+                            <div class="file-card">📁</div>
+                        @endif
+                    </a>
+                @empty
                     <p class="no-files">No files attached</p>
-                @endif
+                @endforelse
+
             </div>
             <div class="doc-no">
                 <p class="font-medium">Document Number:</p>

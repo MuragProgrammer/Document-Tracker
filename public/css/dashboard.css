@@ -123,21 +123,16 @@
 
 /* Card colors */
 .card.pending-review {
-    background: #D5E0F3;
-    color: #195879;
+    background: #2b358e;
 }
-.card.completed {
-    background: #E0EBE3;
-    color: #045115;
+.card.end {
+    background-color: #bd3737;
 }
 .card.pending-receipt {
-    background: #FBAC46;
+    background: #fbac46;
 }
-.card.returned {
+.card.reopened {
     background: #318BF2;
-}
-.card.cancelled {
-    background: rgba(212,39,39,0.71);
 }
 .card.total-documents {
     background: #14AE5C;
@@ -231,9 +226,8 @@
 
 .status.under-review { background: rgba(161,199,242,0.55); color: #1F78DE; }
 .status.pending-receipt { background: #F1CA9F; color: #B98633; }
-.status.completed { background: #BEE8C0; color: #36A926; }
-.status.returned { background: #DCBFEF; color: #A859B4; }
-.status.cancelled { background: #F8A1A1; color: #D94B3E; }
+.status.end { background-color: #f19f9f;color: #bd3737; }
+.status.reopened { background: #DCBFEF; color: #A859B4; }
 
 /* Empty row */
 .document-table td.empty {

@@ -56,14 +56,11 @@
                 placeholder="Add notes..."
             ></textarea>
 
-            <!-- Upload Attachments -->
-            <label for="attachments">Upload Picture/s</label>
-            <input
-                type="file"
-                name="attachments[]"
-                id="attachments"
-                multiple
-            >
+            <label>Upload Picture/s</label>
+
+            <div id="uploadContainer" class="upload-grid">
+                <!-- Upload cards will be injected here -->
+            </div>
 
             <!-- Actions -->
             <div class="form-actions">
@@ -106,6 +103,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update on type change
     typeSelect.addEventListener('change', updateDocumentNumber);
+
+    const container = document.getElementById('uploadContainer');
+
+    function createUploadCard() {
+        const card = document.createElement('label');
+        card.classList.add('upload-card');
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.name = 'attachments[]';
+        input.accept = 'image/*';
+
+        const plus = document.createElement('span');
+        plus.textContent = '+';
+
+        card.appendChild(input);
+        card.appendChild(plus);
+
+        input.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                card.innerHTML = `<img src="${e.target.result}" />`;
+                card.appendChild(input);
+            };
+
+            reader.readAsDataURL(file);
+
+            // Add new empty card if this is the last one
+            if (container.lastElementChild === card) {
+                container.appendChild(createUploadCard());
+            }
+        });
+
+        return card;
+    }
+
+    // Init first card
+    container.appendChild(createUploadCard());
+    
 });
 </script>
 @endpush

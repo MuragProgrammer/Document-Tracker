@@ -240,10 +240,6 @@
     color: #2b358e;
 }
 
-.status.completed {
-    background-color: #BEE8C0;
-    color: #36A926;
-}
 
 /* Action */
 .view-btn {
@@ -422,6 +418,49 @@ input[readonly] {
     color: #fff;
     border-bottom: 2px solid var(--main-color);
 }
+
+
+.upload-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.upload-card {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: #fafafa;
+    transition: 0.2s;
+}
+
+.upload-card:hover {
+    border-color: #6366f1;
+    background: #f0f3ff;
+}
+
+.upload-card input {
+    display: none;
+}
+
+.upload-card span {
+    font-size: 28px;
+    color: #999;
+}
+
+.upload-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 
 /* =========================
    DOCUMENT PAGE RESPONSIVE CSS

@@ -12,12 +12,6 @@
             {{ ucfirst(strtolower($doc->status)) }}
         </span>
     </td>
-
-    <td>
-        <a href="{{ route('documents.show', $doc) }}" class="btn btn-view">
-            View
-        </a>
-    </td>
 </tr>
 @empty
 <tr>

@@ -32,13 +32,12 @@ class ReportsController extends Controller
         // -----------------------------
         // Status labels (INCLUDE CREATED)
         // -----------------------------
-        $statuses = ['CREATED','PENDING','UNDER REVIEW','END OF CYCLE','REOPENED'];
+        $statuses = ['PENDING','UNDER REVIEW','END OF CYCLE','REOPENED'];
 
         $statusLabels = [
-            'CREATED'      => 'Draft',
             'PENDING'      => 'Pending',
             'UNDER REVIEW' => 'Under Review',
-            'END OF CYCLE' => 'Completed',
+            'END OF CYCLE' => 'End of Cycle',
             'REOPENED'     => 'Reopened',
         ];
 
@@ -63,11 +62,10 @@ class ReportsController extends Controller
             ->count();
 
         $cardCounts = [
-            'draft'           => $counts['CREATED'],
             'pending_receipt' => $counts['PENDING'],
             'pending_review'  => $counts['UNDER REVIEW'],
-            'completed'       => $counts['END OF CYCLE'],
-            'returned'        => $counts['REOPENED'],
+            'end'       => $counts['END OF CYCLE'],
+            'reopened'        => $counts['REOPENED'],
             'cancelled'       => $cancelledCount,
         ];
 
@@ -84,6 +82,7 @@ class ReportsController extends Controller
                 'documents.status',
                 DB::raw('COUNT(*) as total')
             )
+            ->where('status', '!=', 'CREATED')
             ->groupBy('sections.section_name', 'documents.status')
             ->get();
 
