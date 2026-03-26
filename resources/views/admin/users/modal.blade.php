@@ -12,21 +12,34 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Full Name <span>*</span></label>
-                    <input type="text" id="modal_full_name" name="full_name" placeholder="Enter full name" required>
+                    <label>First Name <span>*</span></label>
+                    <input type="text" id="modal_first_name" name="first_name" placeholder="Enter first name" required>
                     <div class="input-feedback"></div>
                 </div>
 
+                <div class="form-group">
+                    <label>Middle Name <span>*</span></label>
+                    <input type="text" id="modal_middle_name" name="middle_name" placeholder="Enter middle name" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Last Name <span>*</span></label>
+                    <input type="text" id="modal_last_name" name="last_name" placeholder="Enter last name" required>
+                    <div class="input-feedback"></div>
+                </div>
+
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label>Username <span>*</span></label>
                     <input type="text" id="modal_username" name="username" placeholder="Enter username" required>
                     <div class="input-feedback"></div>
                 </div>
-            </div>
-
-            <div class="form-group full">
-                <label>Password</label>
-                <input type="password" id="modal_password" name="password" placeholder="Leave blank to keep current password">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="modal_password" name="password" placeholder="Leave blank to keep current password">
+                </div>
             </div>
 
             <!-- ASSIGNMENT -->
@@ -82,7 +95,7 @@
                 <select id="modal_role" name="role" required>
                     <option value="ADMIN">Admin</option>
                     <option value="CHIEF">Chief</option>
-                    <option value="DIVISION-HEAD">Division Head</option>
+                    <option value="DEPARTMENT-HEAD">Department Head</option>
                     <option value="SECTION-HEAD">Section Head</option>
                     <option value="EMPLOYEE">Employee</option>
                 </select>

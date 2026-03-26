@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->increments('position_id');
             $table->string('position_title', 255);
-            $table->string('plantilla_number')->unique();
             $table->tinyInteger('is_active');
             $table->timestamp('created_at');
         });

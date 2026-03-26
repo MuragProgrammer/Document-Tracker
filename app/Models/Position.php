@@ -14,7 +14,6 @@ class Position extends Model
 
     protected $fillable = [
         'position_title',
-        'plantilla_number',
         'is_active',
     ];
 

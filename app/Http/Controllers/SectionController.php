@@ -9,10 +9,31 @@ use Illuminate\Support\Facades\DB;
 
 class SectionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $sections = Section::with('department')->orderBy('section_id')->get();
-        $departments = Department::orderBy('department_name')->get(); // for modal
+        $search = $request->input('search');
+        $departmentId = $request->input('department_id');
+
+        $sections = Section::with('department')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('section_name', 'like', "%{$search}%")
+                        ->orWhereHas('department', function ($q2) use ($search) {
+                            $q2->where('department_name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when($departmentId, fn($q) => $q->where('department_id', $departmentId))
+            ->orderBy('section_name')
+            ->paginate(10)
+            ->withQueryString();
+
+        $departments = Department::orderBy('department_name')->get();
+
+        if ($request->ajax()) {
+            return view('admin.sections.search', compact('sections'))->render();
+        }
+
         return view('admin.sections.index', compact('sections', 'departments'));
     }
 

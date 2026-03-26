@@ -15,7 +15,9 @@ return new class extends Migration
 
         Schema::create('users', function (Blueprint $table) {
             $table->increments('user_id');
-            $table->string('full_name', 255);
+            $table->string('first_name', 255);
+            $table->string('middle_name', 255);
+            $table->string('last_name', 255);
             $table->string('username', 255);
             $table->string('password_hash', 255);
             $table->unsignedInteger('section_id');

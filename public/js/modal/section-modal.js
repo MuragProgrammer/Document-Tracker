@@ -14,24 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitle = modal.querySelector('#sectionModalTitle');
     const cancelBtns = modal.querySelectorAll('.modal-close');
 
-    const validity = { name: false, code: false, department: false };
+    const validity = { name: false, code: false };
 
     const updateSubmitState = () => {
-        submitBtn.disabled = !validity.name || !validity.code || !departmentSelect.value;
+        submitBtn.disabled = !validity.name || !validity.code;
     };
-
-    const resetInputs = () => {
-        [nameInput, codeInput, departmentSelect].forEach(input => {
-            input.classList.remove('valid', 'invalid');
-            const feedback = input.parentElement.querySelector('.input-feedback, .input-feedback-code, .input-feedback-department');
-            if (feedback) feedback.textContent = '';
-        });
-        Object.keys(validity).forEach(key => validity[key] = false);
-        updateSubmitState();
-    };
-
-    const setUppercase = (input) => { input.value = input.value.toUpperCase(); };
-
+    
+    // ------------------- Helpers -------------------
     const setupStatusToggle = (checkbox) => {
         const wrapper = checkbox.closest('.status-toggle-wrapper');
         const label = wrapper.querySelector('.status-label');
@@ -46,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     setupStatusToggle(statusInput);
 
+    const setUppercase = (input) => { input.value = input.value.toUpperCase(); };
+
     const setMethodInput = (method) => {
         let methodInput = form.querySelector('input[name="_method"]');
         if (!methodInput) {
@@ -56,51 +47,55 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         methodInput.value = method;
     };
+
     const removeMethodInput = () => {
         const methodInput = form.querySelector('input[name="_method"]');
         if (methodInput) methodInput.remove();
     };
 
-    const openModal = (title, data = null, method = 'POST', actionUrl = '') => {
+    const resetForm = () => {
+        form.reset();
+        sectionIdInput.value = '';
+        removeMethodInput();
+        statusInput.updateStatus(false);
+    };
+
+    // ------------------- Modal Open/Close -------------------
+    const openModal = (title, data = null) => {
         modal.classList.remove('hidden');
         modalTitle.textContent = title;
-        form.reset();
-        resetInputs();
-        statusInput.updateStatus(false);
+        resetForm();
 
         if (data) {
+            // EDIT
             sectionIdInput.value = data.section_id || '';
             nameInput.value = data.section_name || '';
             codeInput.value = data.section_code || '';
             departmentSelect.value = data.department_id || '';
             statusInput.updateStatus(data.is_active === '1' || data.is_active === 1 || data.is_active === true);
-            setMethodInput(method);
-            form.action = actionUrl || form.action;
 
-            validity.name = true;
-            validity.code = true;
-            validity.department = true;
+            setMethodInput('PUT');
+            form.action = addBtn.dataset.updateRoute.replace(':id', data.section_id);
         } else {
-            sectionIdInput.value = '';
-            removeMethodInput();
+            // ADD
             form.action = addBtn.dataset.storeRoute;
+            form.method = 'POST';
         }
-        updateSubmitState();
+
+        submitBtn.disabled = false;
     };
 
     const closeModal = () => {
         modal.classList.add('hidden');
-        form.reset();
-        resetInputs();
-        statusInput.updateStatus(false);
+        resetForm();
     };
 
     cancelBtns.forEach(btn => btn.addEventListener('click', closeModal));
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
+    // ------------------- Event Listeners -------------------
     addBtn.addEventListener('click', () => openModal('Add Section'));
 
-    // Edit buttons
     document.querySelectorAll('.editSectionBtn').forEach(btn => {
         btn.addEventListener('click', () => {
             const section = {
@@ -110,14 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 department_id: btn.dataset.department,
                 is_active: btn.dataset.active
             };
-            const actionUrl = addBtn.dataset.updateRoute.replace(':id', section.section_id);
-            openModal('Edit Section', section, 'PUT', actionUrl);
+            openModal('Edit Section', section);
         });
     });
 
     codeInput.addEventListener('input', () => setUppercase(codeInput));
 
-    // ------------------- Validators -------------------
+    // ------------------- Optional Validators -------------------
     if (window.validateUniqueAndSuggest) {
         const csrfToken = form.querySelector('input[name="_token"]').value;
 
@@ -126,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             table: 'sections',
             column: 'section_name',
             fieldKey: 'name',
-            csrfToken: csrfToken,
+            csrfToken,
             feedbackClass: 'input-feedback',
             endpoint: addBtn.dataset.searchRoute,
             validity: validity,
@@ -138,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             table: 'sections',
             column: 'section_code',
             fieldKey: 'code',
-            csrfToken: csrfToken,
+            csrfToken,
             feedbackClass: 'input-feedback-code',
             endpoint: addBtn.dataset.searchRoute,
             validity: validity,

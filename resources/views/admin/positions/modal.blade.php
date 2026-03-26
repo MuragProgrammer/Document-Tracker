@@ -12,14 +12,7 @@
                 <input type="text" id="modal_position_title" name="position_title" placeholder="Enter position title" required>
                 <div class="input-feedback"></div>
             </div>
-
-            <!-- Plantilla Number -->
-            <div class="form-group">
-                <label>Plantilla Number <span class="required">*</span></label>
-                <input type="text" id="modal_plantilla_number" name="plantilla_number" placeholder="Enter plantilla number" required>
-                <div class="input-feedback-plantilla"></div>
-            </div>
-
+            
             <!-- Status -->
             <div class="form-group">
                 <label>Status</label>

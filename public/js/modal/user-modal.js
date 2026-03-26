@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inputs
     const userIdInput = modal.querySelector('#user_id');
-    const fullNameInput = modal.querySelector('#modal_full_name');
+    const firstNameInput = modal.querySelector('#modal_first_name');
+    const middleNameInput = modal.querySelector('#modal_middle_name');
+    const lastNameInput = modal.querySelector('#modal_last_name');
     const usernameInput = modal.querySelector('#modal_username');
     const passwordInput = modal.querySelector('#modal_password');
     const sectionSelect = modal.querySelector('#modal_section_id');
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------------- Helpers -----------------
     const resetInputs = () => {
-        [fullNameInput, usernameInput, passwordInput].forEach(input => {
+        [firstNameInput, middleNameInput, lastNameInput, usernameInput, passwordInput].forEach(input => {
             input.classList.remove('valid', 'invalid');
             const feedback = input.parentElement.querySelector('.input-feedback');
             if (feedback) feedback.textContent = '';
@@ -76,7 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data) {
             userIdInput.value = data.id || '';
-            fullNameInput.value = data.full_name || '';
+            firstNameInput.value = data.first_name || '';
+            middleNameInput.value = data.middle_name || '';
+            lastNameInput.value = data.last_name || '';
             usernameInput.value = data.username || '';
             sectionSelect.value = data.section_id || '';
             departmentInput.value = data.department_name || '';
@@ -108,7 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'Edit User',
             {
                 id: btn.dataset.userId,
-                full_name: btn.dataset.fullName,
+                first_name: btn.dataset.firstName,
+                middle_name: btn.dataset.middleName,
+                last_name: btn.dataset.lastName,
                 username: btn.dataset.username,
                 section_id: btn.dataset.sectionId,
                 department_name: btn.dataset.departmentName,

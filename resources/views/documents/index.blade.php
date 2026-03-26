@@ -28,6 +28,29 @@
                 <form method="GET" action="{{ route('documents.index') }}">
                     <input type="text" name="my_search" placeholder="Search my documents..." value="{{ request('my_search') }}" autocomplete="off">
 
+                    {{-- Section Filter --}}
+                    <select name="my_section_id">
+                        @php
+                            // Determine sections available in column 1
+                            if (in_array($role, ['SECTION-HEAD', 'EMPLOYEE'])) {
+                                $col1Sections = [$user->section]; // Only their section
+                            } else{
+                                $col1Sections = $sections->where('department_id', $user->section->department->department_id);
+                            }
+                        @endphp
+
+                        @foreach($col1Sections as $section)
+                            <option value="{{ $section->section_id }}"
+                                {{ request('my_section_id', $user->section_id) == $section->section_id ? 'selected' : '' }}>
+                                {{ $section->section_name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @if(!in_array($role, ['DEPARTMENT-HEAD', 'CHIEF', 'ADMIN']))
+                        <input type="hidden" name="my_section_id" value="{{ $user->section_id }}">
+                    @endif
+
                     <select name="my_status">
                         <option value="">All Status</option>
                         <option value="CREATED" {{ request('my_status')=='CREATED'?'selected':'' }}>Created</option>
@@ -37,8 +60,7 @@
                     </select>
 
                     <input type="hidden" name="col_1" value="{{ $col1 }}">
-
-                    {{-- preserve column 2 filters --}}
+                    {{-- Preserve column 2 filters --}}
                     <input type="hidden" name="all_search" value="{{ request('all_search') }}">
                     <input type="hidden" name="all_status" value="{{ request('all_status') }}">
                     <input type="hidden" name="col_2" value="{{ request('col_2') }}">
@@ -51,8 +73,8 @@
             <div class="tabs">
                 <a href="{{ route('documents.index', array_merge(request()->all(), ['col_1'=>'handled'])) }}"
                    class="tab-btn {{ $col1=='handled'?'active':'' }}">Handled Documents</a>
-                <a href="{{ route('documents.index', array_merge(request()->all(), ['col_1'=>'my'])) }}"
-                   class="tab-btn {{ $col1=='my'?'active':'' }}">My  Documents</a>
+                <a href="{{ route('documents.index', array_merge(request()->all(), ['col_1'=>'created'])) }}"
+                   class="tab-btn {{ $col1=='created'?'active':'' }}">Created  Documents</a>
             </div>
 
             {{-- TAB: HANDLED --}}
@@ -75,7 +97,7 @@
                             <div class="col">{{ $doc->document_name }}</div>
                             <div class="col">{{ $doc->type->type_name ?? '-' }}</div>
                             <div class="col">{{ $doc->currentSection->section_name ?? '-' }}</div>
-                            <div class="col">{{ $doc->createdBy->full_name ?? '-' }}</div>
+                            <div class="col">{{ $doc->createdBy->first_name ?? '-' }}</div>
                             <div class="col">{{ $doc->created_at ?? '-' }}</div>
                             <div class="col status {{ strtolower($doc->status) }}">{{ ucfirst(strtolower($doc->status)) }}</div>
                             <div class="col action">
@@ -91,14 +113,15 @@
                 </div>
             </div>
 
-            {{-- TAB:  --}}
-            <div class="tab-content {{ $col1=='my'?'active':'' }}" id="my">
+            {{-- TAB: CREATED --}}
+            <div class="tab-content {{ $col1=='created'?'active':'' }}" id="created">
                 <div class="document-table">
                     <div class="table-header">
                         <div class="col">Doc No.</div>
                         <div class="col">Document Name</div>
                         <div class="col">Type</div>
                         <div class="col">Current Section</div>
+                        <div class="col">Created By</div>
                         <div class="col">Date </div>
                         <div class="col">Status</div>
                         <div class="col">Action</div>
@@ -110,6 +133,7 @@
                             <div class="col">{{ $doc->document_name }}</div>
                             <div class="col">{{ $doc->type->type_name ?? '-' }}</div>
                             <div class="col">{{ $doc->currentSection->section_name ?? '-' }}</div>
+                            <div class="col">{{ $doc->createdBy->full_name ?? '-' }}</div>
                             <div class="col">{{ $doc->created_at ?? '-' }}</div>
                             <div class="col status {{ strtolower($doc->status) }}">{{ ucfirst(strtolower($doc->status)) }}</div>
                             <div class="col action">
@@ -138,6 +162,34 @@
                 <form method="GET" action="{{ route('documents.index') }}">
                     <input type="text" name="all_search" placeholder="Search documents..." value="{{ request('all_search') }}" autocomplete="off">
 
+                    {{-- Section Filter --}}
+                    <label>Section</label>
+                    <select name="section_id">
+                        @php
+                            // Determine sections available in column 2
+                            if (in_array($role, ['DEPARTMENT-HEAD', 'CHIEF', 'ADMIN'])) {
+                                $col2Sections = $sections; // All sections
+                            } else {
+                                $col2Sections = [$user->section]; // Only their section
+                            }
+                        @endphp
+
+                        @if(in_array($role, ['DEPARTMENT-HEAD', 'CHIEF', 'ADMIN']))
+                            <option value="all" {{ request('section_id') == 'all' ? 'selected' : '' }}>All Sections</option>
+                        @endif
+
+                        @foreach($col2Sections as $section)
+                            <option value="{{ $section->section_id }}"
+                                {{ request('section_id', $user->section_id) == $section->section_id ? 'selected' : '' }}>
+                                {{ $section->section_name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @if(!in_array($role, ['DEPARTMENT-HEAD', 'CHIEF', 'ADMIN']))
+                        <input type="hidden" name="section_id" value="{{ $user->section_id }}">
+                    @endif
+
                     <select name="all_status">
                         <option value="">All Status</option>
                         <option value="PENDING" {{ request('all_status')=='PENDING'?'selected':'' }}>Pending</option>
@@ -158,10 +210,57 @@
 
             {{-- Tabs --}}
             <div class="tabs">
+                <a href="{{ route('documents.index', array_merge(request()->all(), ['col_2'=>'pending'])) }}"
+                   class="tab-btn {{ $col2=='pending'?'active':'' }}">Pending Documents</a>
                 <a href="{{ route('documents.index', array_merge(request()->all(), ['col_2'=>'forwarded'])) }}"
                    class="tab-btn {{ $col2=='forwarded'?'active':'' }}">Forwarded Documents</a>
                 <a href="{{ route('documents.index', array_merge(request()->all(), ['col_2'=>'all'])) }}"
                    class="tab-btn {{ $col2=='all'?'active':'' }}">All Documents</a>
+            </div>
+
+            {{-- TAB: PENDING --}}
+            <div class="tab-content {{ $col2=='pending'?'active':'' }}" id="pending">
+                <div class="document-table">
+                    <div class="table-header">
+                        <div class="col">Doc No.</div>
+                        <div class="col">Document Name</div>
+                        <div class="col">Type</div>
+                        <div class="col">Current Section</div>
+                        <div class="col">Forwarded by</div>
+                        <div class="col">Original Holder</div>
+                        <div class="col">Status</div>
+                        <div class="col">Time</div>
+                        <div class="col">Action</div>
+                    </div>
+
+                    @forelse ($pendingDocuments as $doc)
+                        @php
+                            $tracking = $doc->trackingHistory();
+                            $forwardAction = $tracking
+                                ->where('action_type', 'FORWARDED')
+                                ->sortByDesc('action_datetime')
+                                ->first();
+                        @endphp
+                        <div class="table-row">
+                            <div class="col">{{ $doc->document_number }}</div>
+                            <div class="col">{{ $doc->document_name }}</div>
+                            <div class="col">{{ $doc->type->type_name ?? '-' }}</div>
+                            <div class="col">{{ $doc->currentSection->section_name ?? '-' }}</div>
+                            <div class="col">{{ $forwardAction?->user?->full_name ?? '-' }}</div>
+                            <div class="col">{{ $doc->createdBy->full_name ?? '-' }}</div>
+                            <div class="col status {{ strtolower($doc->status) }}">{{ ucfirst(strtolower($doc->status)) }}</div>
+                            <div class="col">{{ $doc->updated_at->diffForHumans() }}</div>
+                            <div class="col action">
+                                <a href="{{ route('documents.show', $doc) }}" class="btn btn-view">View</a>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="empty-table">No pending documents.</div>
+                    @endforelse
+                </div>
+                <div class="pagination-container">
+                    {{ $pendingDocuments->withQueryString()->links('components.custom-pagination') }}
+                </div>
             </div>
 
             {{-- TAB: FORWARDED --}}
@@ -175,7 +274,6 @@
                         <div class="col">Forwarded by</div>
                         <div class="col">Original Holder</div>
                         <div class="col">Status</div>
-                        <div class="col">Time</div>
                         <div class="col">Action</div>
                     </div>
 
@@ -195,7 +293,6 @@
                             <div class="col">{{ $forwardAction?->user?->full_name ?? '-' }}</div>
                             <div class="col">{{ $doc->createdBy->full_name ?? '-' }}</div>
                             <div class="col status {{ strtolower($doc->status) }}">{{ ucfirst(strtolower($doc->status)) }}</div>
-                            <div class="col">{{ $doc->updated_at->diffForHumans() }}</div>
                             <div class="col action">
                                 <a href="{{ route('documents.show', $doc) }}" class="btn btn-view">View</a>
                             </div>
@@ -220,6 +317,9 @@
                         <div class="col">Original Holder</div>
                         <div class="col">Date </div>
                         <div class="col">Status</div>
+                         @if(in_array($role, ['DEPARTMENT-HEAD', 'CHIEF', 'ADMIN']))
+                        <div class="col">Action</div>
+                        @endif
                     </div>
 
                     @forelse ($allDocuments as $doc)
@@ -231,6 +331,11 @@
                             <div class="col">{{ $doc->createdBy->full_name ?? '-' }}</div>
                             <div class="col">{{ $doc->created_at ?? '-' }}</div>
                             <div class="col status {{ strtolower($doc->status) }}">{{ ucfirst(strtolower($doc->status)) }}</div>
+                             @if(in_array($role, ['DEPARTMENT-HEAD', 'CHIEF', 'ADMIN']))
+                            <div class="col action">
+                                <a href="{{ route('documents.show', $doc) }}" class="btn btn-view">View</a>
+                            </div>
+                            @endif
                         </div>
                     @empty
                         <div class="empty-table">No documents available.</div>
@@ -247,12 +352,13 @@
 </div> {{-- End document-tracker --}}
 
 @endsection
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
     // -------------------------
-    // Tab switching (keep EXACTLY as you have)
+    // Tab switching
     // -------------------------
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', e => {
@@ -273,9 +379,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // -------------------------
-    // Auto-submit form on status change
+    // Auto-submit form on status or section change
     // -------------------------
-    document.querySelectorAll('select[name$="_status"]').forEach(select => {
+    document.querySelectorAll('select[name$="_status"], select[name$="_section_id"], select[name="section_id"]').forEach(select => {
         select.addEventListener('change', function() {
             const form = select.closest('form');
             if(form) form.submit();

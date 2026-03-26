@@ -5,25 +5,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.getElementById('addPositionBtn');
     const form = modal.querySelector('#positionForm');
     const submitBtn = form.querySelector('#positionModalSubmitBtn');
-    const csrfToken = form.querySelector('input[name="_token"]').value;
 
     const titleInput = modal.querySelector('#modal_position_title');
-    const plantillaInput = modal.querySelector('#modal_plantilla_number');
     const statusInput = modal.querySelector('#modal_is_active');
     const positionIdInput = modal.querySelector('#position_id');
     const modalTitle = modal.querySelector('#positionModalTitle');
     const cancelBtns = modal.querySelectorAll('.modal-close');
 
-    const validity = { title: false, plantilla: false };
+    const validity = { title: false }; // Only title now
 
     // ------------------- Helpers -------------------
-    const updateSubmitState = () => submitBtn.disabled = !validity.title || !validity.plantilla;
+    const updateSubmitState = () => submitBtn.disabled = !validity.title;
 
     const resetInputs = () => {
-        [titleInput, plantillaInput].forEach(input => {
+        [titleInput].forEach(input => {
             input.classList.remove('valid', 'invalid');
-            const feedback = input.parentElement.querySelector('.input-feedback, .input-feedback-plantilla');
+            const feedback = input.parentElement.querySelector('.input-feedback');
             if (feedback) feedback.textContent = '';
+            input.value = '';
         });
         Object.keys(validity).forEach(k => validity[k] = false);
         updateSubmitState();
@@ -66,27 +65,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         form.reset();
         resetInputs();
-        statusInput.value = '1';
 
         if (data) {
             positionIdInput.value = data.position_id || '';
             titleInput.value = data.position_title || '';
-            plantillaInput.value = data.plantilla_number || '';
+            validity.title = !!data.position_title;
 
-            // Correctly set checkbox
+            // Set checkbox
             const isActive = data.is_active == 1 || data.is_active === '1';
-            statusInput.checked = isActive; // ✅ set checked
-            statusInput.updateStatus(isActive); // ✅ update label
+            statusInput.checked = isActive;
+            statusInput.updateStatus(isActive);
 
             setMethodInput(method);
             form.action = actionUrl || form.action;
-            validity.title = true;
-            validity.plantilla = true;
         } else {
             positionIdInput.value = '';
             removeMethodInput();
             form.action = addBtn.dataset.storeRoute;
         }
+
         updateSubmitState();
     };
 
@@ -94,14 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('hidden');
         form.reset();
         resetInputs();
-        statusInput.value = '1';
     };
 
     // ------------------- Init -------------------
-    setupStatusToggle(statusInput);
     cancelBtns.forEach(btn => btn.addEventListener('click', closeModal));
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-
     addBtn.addEventListener('click', () => openModal('Add Position'));
 
     document.querySelectorAll('.editPositionBtn').forEach(btn => {
@@ -109,12 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
             'Edit Position',
             {
                 position_id: btn.dataset.positionId,
-                position_title: btn.dataset.title,
-                plantilla_number: btn.dataset.plantilla,
+                position_title: btn.dataset.positionTitle,
                 is_active: btn.dataset.active
             },
             'PUT',
             `/positions/${btn.dataset.positionId}`
         ));
+    });
+
+    // ------------------- Validation -------------------
+    titleInput.addEventListener('input', () => {
+        validity.title = titleInput.value.trim().length > 0;
+        updateSubmitState();
     });
 });

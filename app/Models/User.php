@@ -17,7 +17,9 @@ class User extends Authenticatable
     public $rememberTokenName = null;
 
     protected $fillable = [
-        'full_name',
+        'first_name',
+        'middle_name',
+        'last_name',
         'username',
         'password_hash',
         'section_id',
@@ -47,6 +49,12 @@ class User extends Authenticatable
     public function position()
     {
         return $this->belongsTo(Position::class, 'position_id', 'position_id');
+    }
+
+    public function getFullNameAttribute()
+    {
+        $middleInitial = $this->middle_name ? strtoupper(substr($this->middle_name, 0, 1)) . '.' : '';
+        return trim("{$this->first_name} {$middleInitial} {$this->last_name}");
     }
 
 }

@@ -12,11 +12,6 @@
         <button id="addDeptBtn" class="btn btn-header" data-search-route="{{ route('departments.search') }}">+ Add Department</button>
     </div>
 
-    <!-- Search -->
-    <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search..." />
-    </div>
-
     <!-- Departments Table -->
     <table class="table-container">
         <thead>

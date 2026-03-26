@@ -19,7 +19,7 @@ class ReportsController extends Controller
 
         $isAdmin = $role === 'ADMIN';
         $isChief = $role === 'CHIEF';
-        $isDivHead = $role === 'DIVISION-HEAD';
+        $isDivHead = $role === 'DEPARTMENT-HEAD';
         $isSecHead = $role === 'SECTION-HEAD';
 
         $isFilterAllowed = $isAdmin || $isChief;
@@ -256,7 +256,7 @@ class ReportsController extends Controller
 
         $isAdmin = $role === 'ADMIN';
         $isChief = $role === 'CHIEF';
-        $isDivisionHead = $role === 'DIVISION-HEAD';
+        $isDivisionHead = $role === 'DEPARTMENT-HEAD';
 
         // =============================
         // ADMIN / CHIEF → FULL ACCESS

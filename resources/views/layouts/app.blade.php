@@ -80,7 +80,6 @@
 <script src="{{ asset('js/users.js') }}"></script>
 <script src="{{ asset('js/search.js') }}"></script>
 <script src="{{ asset('js/sidebar.js') }}"></script>
-
 <script>
     // Make the logged-in user available in the browser
     window.loggedInUser = @json(auth()->user());

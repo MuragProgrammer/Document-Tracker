@@ -164,7 +164,6 @@ INSERT INTO `document_types` (`type_id`, `type_name`, `type_code`, `is_active`, 
 CREATE TABLE `positions` (
   `position_id` int(10) UNSIGNED NOT NULL,
   `position_title` varchar(255) NOT NULL,
-  `plantilla_number` varchar(255) NOT NULL,
   `is_active` tinyint(4) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -222,12 +221,14 @@ CREATE TABLE `sessions` (
 
 CREATE TABLE `users` (
   `user_id` int(10) UNSIGNED NOT NULL,
-  `full_name` varchar(255) NOT NULL,
+  `first_name` varchar(255) NOT NULL,
+  'middle_name' varchar(255) NOT NULL,
+  'last_name' varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `section_id` int(10) UNSIGNED NOT NULL,
   `position_id` int(10) UNSIGNED NOT NULL,
-  `role` enum('ADMIN','CHIEF','DIVISION-HEAD','SECTION-HEAD','EMPLOYEE') NOT NULL,
+  `role` enum('ADMIN','CHIEF','DEPARTMENT-HEAD','SECTION-HEAD','EMPLOYEE') NOT NULL,
   `is_active` tinyint(4) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -236,11 +237,6 @@ CREATE TABLE `users` (
 --
 -- Dumping data for table `users`
 --
-
-INSERT INTO `users` (`user_id`, `full_name`, `username`, `password_hash`, `section_id`, `position_id`, `role`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'Admin User', 'admin', '$2y$12$ykoThV5LmLFe5ebcKGvbN.KFo/7hn/fh2KGgL1Sn3T2bXOUMxj16i', 1, 1, 'ADMIN', 1, '2026-02-20 01:36:34', '2026-03-23 02:51:26'),
-(2, 'User', 'user', '$2y$12$e7B6oIcgp1NyfzZOB9XSNO9KIGDzMspwpEgkdO4MMpRqH16fdXOZW', 2, 2, 'EMPLOYEE', 1, '2026-03-05 01:04:27', '2026-03-23 02:50:14'),
-(3, 'Martin Luther Tuico', 'martin', '$2y$12$HoCLTssfb.no0HMbtA/pHujaeqNwAc/uLVQUs0ht.o.LFEEwA2r3u', 4, 2, 'EMPLOYEE', 0, '2026-02-19 17:40:26', '2026-03-09 03:00:58'),
 
 --
 -- Indexes for dumped tables
@@ -298,7 +294,6 @@ ALTER TABLE `document_types`
 --
 ALTER TABLE `positions`
   ADD PRIMARY KEY (`position_id`),
-  ADD UNIQUE KEY `positions_plantilla_number_unique` (`plantilla_number`);
 
 --
 -- Indexes for table `sections`
