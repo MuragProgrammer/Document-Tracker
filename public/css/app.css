@@ -114,6 +114,8 @@ body {
     width: 50vw;
     margin: 40px auto 20px;
     box-sizing: border-box;
+    display: flex;
+    gap: 10px;
 }
 
 .search-input {

@@ -21,6 +21,19 @@
     background-color: #2E4466;
 }
 
+.form-select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-position: right 10px center;
+    background-size: 14px;
+    padding: 10px 36px 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
 /* Badges */
 .badge-enabled {

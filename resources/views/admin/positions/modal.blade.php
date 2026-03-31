@@ -9,10 +9,11 @@
             <!-- Position Title -->
             <div class="form-group">
                 <label>Position Title <span class="required">*</span></label>
-                <input type="text" id="modal_position_title" name="position_title" placeholder="Enter position title" required>
+                <input type="text" id="modal_position_title" name="position_title" placeholder="Enter position title"
+                    required>
                 <div class="input-feedback"></div>
             </div>
-            
+
             <!-- Status -->
             <div class="form-group">
                 <label>Status</label>

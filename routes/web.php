@@ -84,6 +84,9 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/{doc}/action', [DocumentController::class, 'performAction'])
             ->name('documents.action');
+
+        Route::get('/{doc}/tracking-pdf', [DocumentController::class, 'exportTrackingPdf'])
+            ->name('documents.exportTrackingPdf');
     });
 
 

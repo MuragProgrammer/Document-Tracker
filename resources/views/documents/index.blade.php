@@ -56,6 +56,7 @@
                         <option value="CREATED" {{ request('my_status')=='CREATED'?'selected':'' }}>Created</option>
                         <option value="PENDING" {{ request('my_status')=='PENDING'?'selected':'' }}>Pending</option>
                         <option value="FORWARDED" {{ request('my_status')=='FORWARDED'?'selected':'' }}>Forwarded</option>
+                        <option value="UNDER REVIEW" {{ request('my_status')=='UNDER REVIEW'?'selected':'' }}>Under Review</option>
                         <option value="END OF CYCLE" {{ request('my_status')=='END OF CYCLE'?'selected':'' }}>End of Cycle</option>
                     </select>
 
@@ -194,6 +195,7 @@
                         <option value="">All Status</option>
                         <option value="PENDING" {{ request('all_status')=='PENDING'?'selected':'' }}>Pending</option>
                         <option value="FORWARDED" {{ request('all_status')=='FORWARDED'?'selected':'' }}>Forwarded</option>
+                        <option value="UNDER REVIEW" {{ request('my_status')=='UNDER REVIEW'?'selected':'' }}>Under Review</option>
                         <option value="END OF CYCLE" {{ request('all_status')=='END OF CYCLE'?'selected':'' }}>End of Cycle</option>
                     </select>
 

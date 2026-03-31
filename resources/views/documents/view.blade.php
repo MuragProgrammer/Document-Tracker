@@ -149,7 +149,11 @@
     {{-- Tracking History --}}
     <div class="tracking-history">
         <h2 class="tracking-title">Tracking History</h2>
-
+        <a href="{{ route('documents.exportTrackingPdf', $document->doc_id) }}"
+        class="btn btn-sm btn-primary" target="_blank">
+            Export PDF
+        </a>
+        
         <table class="tracking-table">
         <thead>
             <tr>

@@ -10,14 +10,16 @@
             <!-- Department Name -->
             <div class="form-group">
                 <label>Department Name <span class="required">*</span></label>
-                <input type="text" id="modal_department_name" name="department_name" placeholder="Enter department name" required>
+                <input type="text" id="modal_department_name" name="department_name"
+                    placeholder="Enter department name" required>
                 <div class="input-feedback"></div>
             </div>
 
             <!-- Department Code -->
             <div class="form-group">
                 <label>Department Code <span class="required">*</span></label>
-                <input type="text" id="modal_department_code" name="department_code" placeholder="Enter department code" required>
+                <input type="text" id="modal_department_code" name="department_code"
+                    placeholder="Enter department code" required>
                 <div class="input-feedback-code"></div>
             </div>
 

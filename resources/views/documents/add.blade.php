@@ -13,13 +13,11 @@
         <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
+            <input type="hidden" name="form_token" value="{{ Str::uuid() }}">
+
             <!-- Document Number (Preview Only) -->
             <label for="document_number">Document Number</label>
-            <input
-                type="text"
-                id="document_number"
-                readonly
-            >
+            <input type="text" id="document_number" readonly>
 
             <!-- Document Type -->
             <label for="type_id">Document Type</label>
@@ -46,9 +44,7 @@
             >
 
             <!-- Notes -->
-            <label for="notes">
-                Additional Notes <span class="optional">(Optional)</span>
-            </label>
+            <label for="notes">Additional Notes <span class="optional">(Optional)</span></label>
             <textarea
                 name="notes"
                 id="notes"
@@ -56,25 +52,24 @@
                 placeholder="Add notes..."
             ></textarea>
 
+            <!-- Upload Pictures -->
             <label>Upload Picture/s</label>
-
-            <div id="uploadContainer" class="upload-grid">
-                <!-- Upload cards will be injected here -->
-            </div>
+            <div id="uploadContainer" class="upload-grid"></div>
 
             <!-- Actions -->
             <div class="form-actions">
-                <button type="submit" class="btn-primary">
-                    Create Document
-                </button>
-                <a href="{{ route('documents.index') }}" class="btn-cancel">
-                    Cancel
-                </a>
+                <button type="submit" id="submitBtn" class="btn-primary">Create Document</button>
+                <a href="{{ route('documents.index') }}" class="btn-cancel">Cancel</a>
             </div>
-
         </form>
     </div>
 
+    <!-- Optional Processing Overlay -->
+    <div id="processingOverlay" class="processing-overlay" style="display:none;">
+        <div class="overlay-content">
+            <p>Processing Document...</p>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -83,8 +78,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const typeSelect = document.getElementById('type_id');
     const docNumberInput = document.getElementById('document_number');
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submitBtn');
+    const overlay = document.getElementById('processingOverlay');
+    const container = document.getElementById('uploadContainer');
 
-    // Injected from controller
+    // ----------------------------
+    // Dynamic Document Number
+    // ----------------------------
     const departmentCode = "{{ $department_code }}";
     const sectionCode = "{{ $section_code }}";
     const year = "{{ $year }}";
@@ -93,19 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateDocumentNumber() {
         const selectedOption = typeSelect.options[typeSelect.selectedIndex];
         const typeCode = selectedOption.dataset.typeCode || 'TYPE';
-
-        docNumberInput.value =
-            `${departmentCode}-${sectionCode}-${typeCode}-${year}-${nextDocId}`;
+        docNumberInput.value = `${departmentCode}-${sectionCode}-${typeCode}-${year}-${nextDocId}`;
     }
 
-    // Init
     updateDocumentNumber();
-
-    // Update on type change
     typeSelect.addEventListener('change', updateDocumentNumber);
 
-    const container = document.getElementById('uploadContainer');
-
+    // ----------------------------
+    // Dynamic Upload Cards
+    // ----------------------------
     function createUploadCard() {
         const card = document.createElement('label');
         card.classList.add('upload-card');
@@ -126,15 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!file) return;
 
             const reader = new FileReader();
-
             reader.onload = function (e) {
                 card.innerHTML = `<img src="${e.target.result}" />`;
                 card.appendChild(input);
             };
-
             reader.readAsDataURL(file);
 
-            // Add new empty card if this is the last one
             if (container.lastElementChild === card) {
                 container.appendChild(createUploadCard());
             }
@@ -143,9 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
-    // Init first card
     container.appendChild(createUploadCard());
-    
 });
 </script>
 @endpush

@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\PDF;
 
 class DocumentController extends Controller
@@ -100,10 +102,17 @@ class DocumentController extends Controller
                 'actions.user', 'actions.section'
             ])
             ->where('status', '!=', 'CREATED')
-            ->whereHas('actions', function ($q) use ($allSectionId) {
-                $q->whereIn('action_type', ['RECEIVED', 'FORWARDED'])
-                ->when($allSectionId && $allSectionId !== 'all', fn($q2) => $q2->where('section_id', $allSectionId));
+
+            // ✅ Show ONLY documents that passed through the section
+            ->whereHas('actions', function ($q) use ($allSectionId, $user) {
+
+                $sectionId = ($allSectionId && $allSectionId !== 'all')
+                    ? $allSectionId
+                    : $user->section_id;
+
+                $q->where('section_id', $sectionId);
             })
+
             ->when($allSearch, fn($q) => $searchFilter($q, $allSearch))
             ->when($allStatus, fn($q) => $q->where('status', $allStatus))
             ->orderBy('updated_at', 'desc')
@@ -115,6 +124,10 @@ class DocumentController extends Controller
         // ------------------------------
         $allDocuments = Document::with(['type', 'currentSection'])
             ->whereNotIn('status', ['CREATED'])
+            ->whereHas('actions', function ($q) use ($allSectionId) {
+                $q->whereIn('action_type', ['RECEIVED', 'FORWARDED'])
+                ->when($allSectionId && $allSectionId !== 'all', fn($q2) => $q2->where('section_id', $allSectionId));
+            })
             ->when($allSearch, fn($q) => $searchFilter($q, $allSearch))
             ->when($allStatus, fn($q) => $q->where('status', $allStatus))
             ->orderBy('updated_at', 'desc')
@@ -165,61 +178,81 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'type_id'         => 'required|exists:document_types,type_id',
-                'document_name'   => 'required|string|max:255',
-                'attachments.*'   => 'nullable|file|mimes:jpg,jpeg,png,pdf,txt|max:10240',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()
-                ->withErrors($e->errors())
-                ->withInput();
+        $user = Auth::user();
+        $cooldownKey = 'user-create-doc:' . $user->user_id;
+
+        // -----------------------------
+        // Prevent rapid re-submission
+        // -----------------------------
+        if (Cache::has($cooldownKey)) {
+            // Immediately redirect if user already submitted
+            return redirect()->route('documents.index')
+                ->with('success', 'Document created successfully!');
         }
 
-        $user = Auth::user();
+        // Set cooldown for 5 seconds (adjust as needed)
+        Cache::put($cooldownKey, true, 5);
 
-        // Codes from user context
-        $department_code = strtoupper($user->section->department->department_code ?? 'DEPT');
-        $section_code    = strtoupper($user->section->section_code ?? 'SECTION');
-
-        // Document type code
-        $type = DocumentType::findOrFail($request->type_id);
-        $type_code = strtoupper($type->type_code);
-
-        // Next document ID
-        $lastDoc = Document::orderBy('doc_id', 'desc')->first();
-        $nextDocId = $lastDoc ? $lastDoc->doc_id + 1 : 1;
-        $nextDocIdPadded = str_pad($nextDocId, 3, '0', STR_PAD_LEFT);
-
-        // Final document number
-        $document_number = "{$department_code}-{$section_code}-{$type_code}-" . now()->year . "-{$nextDocIdPadded}";
-
-        // Create document
-        $document = Document::create([
-            'document_number'        => $document_number,
-            'document_name'          => $request->document_name,
-            'type_id'                => $request->type_id,
-            'originating_section_id' => $user->section_id,
-            'current_section_id'     => $user->section_id,
-            'current_holder_id'      => $user->user_id,
-            'created_by'             => $user->user_id,
-            'status'                 => 'CREATED',
-            'is_active'              => 1,
+        // -----------------------------
+        // Validate input
+        // -----------------------------
+        $request->validate([
+            'type_id'       => 'required|exists:document_types,type_id',
+            'document_name' => 'required|string|max:255',
+            'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,txt|max:10240',
+            'form_token'    => 'required|string',
         ]);
 
-        // Record the creation action
-        DocumentAction::create([
-            'doc_id'          => $document->doc_id,
-            'section_id'      => $user->section_id,
-            'user_id'         => $user->user_id,
-            'action_type'     => 'CREATED',
-            'remarks'         => 'Document created',
-            'action_datetime' => now(),
-        ]);
+        // -----------------------------
+        // Database transaction
+        // -----------------------------
+        DB::transaction(function () use ($request, $user) {
 
-        // --- Generate PDF ---
-           $pdf = app(\Barryvdh\DomPDF\PDF::class)->loadView('documents.pdf', [
+            $department_code = strtoupper($user->section->department->department_code ?? 'DEPT');
+            $section_code    = strtoupper($user->section->section_code ?? 'SEC');
+
+            $type = DocumentType::findOrFail($request->type_id);
+            $type_code = strtoupper($type->type_code);
+
+            // Lock last document to prevent race conditions
+            $lastDoc = Document::lockForUpdate()->orderBy('doc_id', 'desc')->first();
+            $nextDocId = $lastDoc ? $lastDoc->doc_id + 1 : 1;
+            $nextDocIdPadded = str_pad($nextDocId, 3, '0', STR_PAD_LEFT);
+
+            $document_number = "{$department_code}-{$section_code}-{$type_code}-" . now()->year . "-{$nextDocIdPadded}";
+
+            // -----------------------------
+            // Create Document
+            // -----------------------------
+            $document = Document::create([
+                'doc_id' => $nextDocId,
+                'document_number' => $document_number,
+                'document_name' => $request->document_name,
+                'type_id' => $request->type_id,
+                'originating_section_id' => $user->section_id,
+                'current_section_id' => $user->section_id,
+                'current_holder_id' => $user->user_id,
+                'created_by' => $user->user_id,
+                'status' => 'CREATED',
+                'is_active' => 1,
+            ]);
+
+            // -----------------------------
+            // Record action
+            // -----------------------------
+            DocumentAction::create([
+                'doc_id' => $document->doc_id,
+                'section_id' => $user->section_id,
+                'user_id' => $user->user_id,
+                'action_type' => 'CREATED',
+                'remarks' => 'Document created',
+                'action_datetime' => now(),
+            ]);
+
+            // -----------------------------
+            // Generate PDF
+            // -----------------------------
+            $pdf = app(\Barryvdh\DomPDF\PDF::class)->loadView('documents.pdf', [
                 'document_number' => $document_number,
                 'document_name'   => $request->document_name,
                 'created_at'      => now()->format('F j, Y'),
@@ -228,11 +261,8 @@ class DocumentController extends Controller
 
             $pdfFileName = 'DOC_' . $document_number . '.pdf';
             $pdfPath = 'documents/' . $pdfFileName;
-
-            // Save PDF to storage
             Storage::disk('public')->put($pdfPath, $pdf->output());
 
-            // Attach PDF automatically
             DocumentAttachment::create([
                 'doc_id'             => $document->doc_id,
                 'file_original_name' => $pdfFileName,
@@ -246,7 +276,9 @@ class DocumentController extends Controller
                 'uploaded_at'        => now(),
             ]);
 
-            // --- Handle other attachments ---
+            // -----------------------------
+            // Handle other attachments
+            // -----------------------------
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $file) {
                     $storedName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
@@ -266,10 +298,13 @@ class DocumentController extends Controller
                     ]);
                 }
             }
+        });
 
-            return redirect()
-                ->route('documents.index')
-                ->with('success', 'Document created successfully! PDF attached automatically.');
+        // -----------------------------
+        // Redirect immediately after first successful creation
+        // -----------------------------
+        return redirect()->route('documents.index')
+            ->with('success', 'Document created successfully!');
     }
 
     public function show(Document $doc)
@@ -392,5 +427,22 @@ class DocumentController extends Controller
         return redirect()
             ->route('documents.index')
             ->with('success', 'Document deleted successfully.');
+    }
+
+    public function exportTrackingPdf($docId)
+    {
+        $document = Document::with([
+            'actions.user',
+            'actions.section'
+        ])->findOrFail($docId);
+
+        $tracks = $document->actions()->orderBy('action_datetime')->get();
+
+        $pdf = app(\Barryvdh\DomPDF\PDF::class)->loadView('documents.tracking_pdf', [
+            'document' => $document,
+            'tracks'   => $tracks
+        ]);
+
+        return $pdf->download('Tracking_History_' . $document->document_number . '.pdf');
     }
 }
