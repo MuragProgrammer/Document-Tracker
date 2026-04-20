@@ -81,19 +81,31 @@
                             @if($isAdmin || $isChief)
 
                                 @if(request('filter_by','department')=='department')
+
+                                    <option value="all" @selected(request('dept_or_sec')=='all')>
+                                        All Departments
+                                    </option>
+
                                     @foreach($departments as $dept)
                                         <option value="{{ $dept->department_id }}"
                                             @selected(request('dept_or_sec')==$dept->department_id)>
                                             {{ $dept->department_name }}
                                         </option>
                                     @endforeach
+
                                 @else
+
+                                    <option value="all" @selected(request('dept_or_sec')=='all')>
+                                        All Sections
+                                    </option>
+
                                     @foreach($sections as $sec)
                                         <option value="{{ $sec->section_id }}"
                                             @selected(request('dept_or_sec')==$sec->section_id)>
                                             {{ $sec->section_name }}
                                         </option>
                                     @endforeach
+
                                 @endif
 
 
@@ -190,9 +202,11 @@
 
 
     <!-- STACKED -->
+    @if(auth()->user()->role === 'ADMIN')
     <div class="grid-stacked">
         <canvas id="sectionStackedChart"></canvas>
     </div>
+    @endif
 
     <!-- LINE -->
     <div class="grid-line">
@@ -250,14 +264,15 @@
     ========================= -->
     <div class="grid-export">
         <div class="export-wrapper mb-4">
-            <button id="pdfBtn" class="btn btn-danger me-2">
-                <span class="btn-text">Export PDF</span>
-                <span class="spinner"></span>
-            </button>
             <button id="csvBtn" class="btn btn-success">
                 <span class="btn-text">Export Excel</span>
                 <span class="spinner"></span>
             </button>
+
+            {{-- <button id="pdfBtn" class="btn btn-danger me-2">
+                <span class="btn-text">Export PDF</span>
+                <span class="spinner"></span>
+            </button> --}}
         </div>
     </div>
 

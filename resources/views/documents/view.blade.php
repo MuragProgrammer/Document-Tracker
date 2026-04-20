@@ -153,56 +153,67 @@
         class="btn btn-sm btn-primary" target="_blank">
             Export PDF
         </a>
-        
-        <table class="tracking-table">
-        <thead>
+
+@php
+    // Sort tracks by datetime ascending
+    $tracks = $document->trackingHistory()->sortBy('action_datetime')->values();
+@endphp
+
+<table class="tracking-table">
+    <thead>
+        <tr>
+            <th>Activity</th>
+            <th>Date & Time</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @forelse($tracks as $index => $track)
+            @php
+                $userName = $track->user->full_name ?? 'Unknown';
+                $action   = $track->action_type ?? '';
+                $activityText = '';
+                $toSection = $track->section->section_name ?? 'Unknown Section';
+
+                switch($action) {
+                    case 'CREATED':
+                        $activityText = "Created by <strong>{$userName}</strong>";
+                        break;
+                    case 'FORWARDED':
+                        $activityText = "Forwarded to <strong>{$toSection}</strong><br>by <strong>{$userName}</strong>";
+                        break;
+                    case 'RECEIVED':
+                        $activityText = "Received by <strong>{$userName}</strong><br>in <strong>{$toSection}</strong>";
+                        break;
+                    case 'END OF CYCLE':
+                        $activityText = "Ended by <strong>{$userName}</strong><br>in <strong>{$toSection}</strong>";
+                        break;
+                    case 'REOPENED':
+                        $activityText = "Reopened by <strong>{$userName}</strong><br>in <strong>{$toSection}</strong>";
+                        break;
+                    default:
+                        $activityText = "{$action} by <strong>{$userName}</strong>";
+                }
+
+                $dateTime = $track->action_datetime
+                    ? \Carbon\Carbon::parse($track->action_datetime)->format('Y-m-d H:i:s')
+                    : '--';
+                $remarks = $track->remarks ?? '--';
+            @endphp
+
             <tr>
-                <th>Activity</th>
-                <th>Date & Time</th>
-                <th>Remarks</th>
+                <td>{!! $activityText !!}</td>
+                <td>{{ $dateTime }}</td>
+                <td>{{ $remarks }}</td>
             </tr>
-        </thead>
-
-        <tbody>
-            @forelse($document->trackingHistory() as $track)
-                @php
-                    $toSection   = $track->section->section_name ?? '-';
-                    $userName    = $track->user->full_name ?? 'Unknown';
-                    $action      = strtolower($track->action_type ?? '');
-                    $activityText = '';
-
-                    switch($action) {
-                        case 'created':
-                            $activityText = "Created by <strong>{$userName}</strong>";
-                            break;
-                        case 'forwarded':
-                            $activityText = "Forwarded to <strong>{$toSection}</strong><br>by <strong>{$userName}</strong>";
-                            break;
-                        case 'received':
-                            $activityText = "Received by <strong>{$userName}</strong><br>in <strong>{$toSection}</strong>";
-                            break;
-                        case 'ended':
-                            $activityText = "Ended by <strong>{$userName}</strong><br>in <strong>{$toSection}</strong>";
-                            break;
-                        case 'reopened':
-                            $activityText = "Reopened by <strong>{$userName}</strong><br>in <strong>{$toSection}</strong>";
-                            break;
-                        default:
-                            $activityText = "{$action} by <strong>{$userName}</strong>";
-                    }
-                @endphp
-                <tr>
-                    <td>{!! $activityText !!}</td>
-                    <td>{{ $track->action_datetime ?? '--' }}</td>
-                    <td>{{ $track->remarks ?? '--' }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="3" class="empty-row">No tracking history available.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+        @empty
+            <tr>
+                <td colspan="3" class="empty-row">No tracking history available.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
     </div>
 </div>
 

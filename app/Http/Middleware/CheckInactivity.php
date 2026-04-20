@@ -9,7 +9,7 @@ class CheckInactivity
 {
     public function handle($request, Closure $next)
     {
-        $timeout = 300; // 5 minutes
+        $timeout = 1200; // 20 minutes
 
         if (Auth::check()) {
 
@@ -23,7 +23,7 @@ class CheckInactivity
                     session()->flush();
 
                     return redirect()->route('login')
-                        ->with('error', 'Logged out due to inactivity for 5 minutes');
+                        ->with('error', 'Logged out due to inactivity for 20 minutes');
                 }
             }
 

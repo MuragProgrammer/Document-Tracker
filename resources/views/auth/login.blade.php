@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (sessionStorage.getItem("logout_reason") === "inactivity") {
 
         if (window.showToast) {
-            showToast("Logged out due to inactivity for 5 minutes", "error");
+            showToast("Logged out due to inactivity for 20 minutes", "error");
         }
 
         sessionStorage.removeItem("logout_reason");

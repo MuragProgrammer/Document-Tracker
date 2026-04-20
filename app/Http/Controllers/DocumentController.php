@@ -24,88 +24,89 @@ class DocumentController extends Controller
         $role = strtoupper($user->role ?? '');
         $sections = Section::orderBy('section_name')->get();
 
-        // COMMON FILTERS
+        // -------------------------
+        // Common search filter
+        // -------------------------
         $searchFilter = function ($query, $search) {
-            $query->where(fn($q) =>
-                $q->where('document_number', 'like', "%{$search}%")
-                ->orWhere('document_name', 'like', "%{$search}%")
-                ->orWhereHas('createdBy', fn($q2) =>
-                    $q2->whereRaw("CONCAT(first_name, ' ', last_name) like ?", ["%{$search}%"])
-                )
-            );
+            $query->where(function ($q) use ($search) {
+                $q->where('document_name', 'LIKE', "%{$search}%")
+                ->orWhere('document_number', 'LIKE', "%{$search}%")
+                ->orWhereHas('createdBy', function ($q2) use ($search) {
+                    $q2->where('first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('last_name', 'LIKE', "%{$search}%")
+                        ->orWhereRaw("CONCAT(first_name,' ',last_name) LIKE ?", ["%{$search}%"]);
+                });
+            });
         };
 
-        $mySearch   = $request->input('my_search');
-        $myStatus   = $request->input('my_status');
-        $allSearch  = $request->input('all_search');
-        $allStatus  = $request->input('all_status');
+        $mySearch = $request->input('my_search');
+        $myStatus = $request->input('my_status');
+        $allSearch = $request->input('all_search');
+        $allStatus = $request->input('all_status');
         $mySectionId = $request->input('my_section_id');
         $allSectionId = $request->input('section_id');
 
-        // ------------------------------
-        // COLUMN 1: MY HANDLED DOCUMENTS
-        // ------------------------------
-        $myDocuments = Document::with(['type', 'currentSection'])
+        // -------------------------
+        // Column 1: My Handled Documents
+        // -------------------------
+        $myDocuments = Document::with(['type', 'currentSection', 'createdBy'])
             ->where('current_section_id', $user->section_id)
-            ->where(function ($query) use ($user) {
-                $query->whereIn('status', ['UNDER REVIEW', 'REOPENED', 'FORWARDED'])
-                    ->orWhere(fn($q) => $q->where('status', 'END OF CYCLE')
-                                            ->where('current_section_id', $user->section_id))
-                    ->orWhere(fn($q) => $q->where('status', 'CREATED')
-                                            ->where('originating_section_id', $user->section_id));
+            ->where(function($q) use($user){
+                $q->whereIn('status', ['UNDER REVIEW','REOPENED','FORWARDED'])
+                ->orWhere(fn($q2)=>$q2->where('status','END OF CYCLE')->where('current_section_id',$user->section_id))
+                ->orWhere(fn($q2)=>$q2->where('status','CREATED')->where('originating_section_id',$user->section_id));
             })
-            ->when($mySearch, fn($q) => $searchFilter($q, $mySearch))
-            ->when($myStatus, fn($q) => $q->where('status', $myStatus))
-            ->orderBy('updated_at', 'desc')
+            ->when($mySearch, fn($q)=>$searchFilter($q,$mySearch))
+            ->when($myStatus, fn($q)=>$q->where('status',$myStatus))
+            ->orderBy('updated_at','desc')
             ->paginate(10, ['*'], 'my_docs')
             ->withQueryString();
 
-        // ------------------------------
-        // COLUMN 1: CREATED DOCUMENTS
-        // ------------------------------
-        $myCreatedDocuments = Document::with(['type', 'currentSection'])
-            ->when(true, function ($query) use ($role, $user, $mySectionId) {
-                if (in_array($role, ['SECTION-HEAD', 'EMPLOYEE'])) {
-                    $query->where('originating_section_id', $user->section_id);
-                } elseif ($role === 'DEPARTMENT-HEAD') {
-                    $sectionIds = Section::where('department_id', $user->section->department->department_id)
+        // -------------------------
+        // Column 1: My Created Documents
+        // -------------------------
+        $myCreatedDocuments = Document::with(['type','currentSection','createdBy'])
+            ->when(true, function($q) use($role,$user,$mySectionId){
+                if(in_array($role,['SECTION-HEAD','EMPLOYEE'])){
+                    $q->where('originating_section_id',$user->section_id);
+                } elseif($role === 'DEPARTMENT-HEAD'){
+                    $sectionIds = Section::where('department_id',$user->section->department->department_id)
                         ->pluck('section_id');
-                    $query->when($mySectionId, fn($q) => $q->where('originating_section_id', $mySectionId))
-                        ->when(!$mySectionId, fn($q) => $q->whereIn('originating_section_id', $sectionIds));
-                } elseif ($role === 'ADMIN') {
-                    $query->when($mySectionId, fn($q) => $q->where('originating_section_id', $mySectionId));
+                    $q->when($mySectionId, fn($q)=>$q->where('originating_section_id',$mySectionId))
+                    ->when(!$mySectionId, fn($q)=>$q->whereIn('originating_section_id',$sectionIds));
+                } elseif($role==='ADMIN'){
+                    $q->when($mySectionId, fn($q)=>$q->where('originating_section_id',$mySectionId));
                 }
             })
-            ->when($mySearch, fn($q) => $searchFilter($q, $mySearch))
-            ->when($myStatus, fn($q) => $q->where('status', $myStatus))
-            ->orderBy('updated_at', 'desc')
+            ->when($mySearch, fn($q)=>$searchFilter($q,$mySearch))
+            ->when($myStatus, fn($q)=>$q->where('status',$myStatus))
+            ->orderBy('updated_at','desc')
             ->paginate(10, ['*'], 'created_docs')
             ->withQueryString();
 
-        // ------------------------------
-        // COLUMN 2: PENDING DOCUMENTS
-        // ------------------------------
-        $pendingDocuments = Document::with(['type','currentSection'])
-            ->where('current_section_id', $user->section_id)
-            ->where('status', 'PENDING')
-            ->when($allSearch, fn($q) => $searchFilter($q, $allSearch))
-            ->orderBy('updated_at', 'desc')
+        // -------------------------
+        // Column 2: Pending Documents
+        // -------------------------
+        $pendingDocuments = Document::with(['type','currentSection','createdBy'])
+            ->where('current_section_id',$user->section_id)
+            ->where('status','PENDING')
+            ->when($allSearch, fn($q)=>$searchFilter($q,$allSearch))
+            ->orderBy('updated_at','desc')
             ->paginate(10, ['*'], 'pending_docs')
             ->withQueryString();
 
-        // ------------------------------
-        // COLUMN 2: FORWARDED DOCUMENTS
-        // ------------------------------
+        // -------------------------
+        // Column 2: Forwarded Documents
+        // -------------------------
         $forwardedDocuments = Document::with([
-                'type', 'currentSection', 'originatingSection',
-                'actions' => fn($q) => $q->latest('action_datetime'),
-                'actions.user', 'actions.section'
+                'type','currentSection','originatingSection','createdBy',
+                'actions'=>fn($q)=>$q->latest('action_datetime'),
+                'actions.user','actions.section'
             ])
             ->where('status', '!=', 'CREATED')
 
-            // ✅ Show ONLY documents that passed through the section
-            ->whereHas('actions', function ($q) use ($allSectionId, $user) {
-
+            // ✅ Must have passed through the section
+            ->whereHas('actions', function($q) use($allSectionId, $user) {
                 $sectionId = ($allSectionId && $allSectionId !== 'all')
                     ? $allSectionId
                     : $user->section_id;
@@ -113,39 +114,56 @@ class DocumentController extends Controller
                 $q->where('section_id', $sectionId);
             })
 
-            ->when($allSearch, fn($q) => $searchFilter($q, $allSearch))
-            ->when($allStatus, fn($q) => $q->where('status', $allStatus))
-            ->orderBy('updated_at', 'desc')
+            // ❗ IMPORTANT: Exclude if currently in that section (still pending there)
+            ->where(function ($q) use ($allSectionId, $user) {
+                $sectionId = ($allSectionId && $allSectionId !== 'all')
+                    ? $allSectionId
+                    : $user->section_id;
+
+                $q->where('current_section_id', '!=', $sectionId)
+                ->orWhere('status', '!=', 'PENDING'); // optional safety
+            })
+
+            ->when($allSearch, fn($q)=>$searchFilter($q,$allSearch))
+            ->when($allStatus, fn($q)=>$q->where('status',$allStatus))
+            ->orderBy('updated_at','desc')
             ->paginate(10, ['*'], 'forwarded_docs')
             ->withQueryString();
 
-        // ------------------------------
-        // COLUMN 2: ALL DOCUMENTS (Except CREATED)
-        // ------------------------------
-        $allDocuments = Document::with(['type', 'currentSection'])
-            ->whereNotIn('status', ['CREATED'])
-            ->whereHas('actions', function ($q) use ($allSectionId) {
-                $q->whereIn('action_type', ['RECEIVED', 'FORWARDED'])
-                ->when($allSectionId && $allSectionId !== 'all', fn($q2) => $q2->where('section_id', $allSectionId));
+        // -------------------------
+        // Column 2: All Documents
+        // -------------------------
+        $allDocuments = Document::with(['type','currentSection','createdBy'])
+            ->whereNotIn('status',['CREATED'])
+            ->whereHas('actions', function($q) use($allSectionId){
+                $q->whereIn('action_type',['RECEIVED','FORWARDED'])
+                ->when($allSectionId && $allSectionId!=='all', fn($q2)=>$q2->where('section_id',$allSectionId));
             })
-            ->when($allSearch, fn($q) => $searchFilter($q, $allSearch))
-            ->when($allStatus, fn($q) => $q->where('status', $allStatus))
-            ->orderBy('updated_at', 'desc')
+            ->when($allSearch, fn($q)=>$searchFilter($q,$allSearch))
+            ->when($allStatus, fn($q)=>$q->where('status',$allStatus))
+            ->orderBy('updated_at','desc')
             ->paginate(10, ['*'], 'all_docs')
             ->withQueryString();
 
+        // -------------------------
+        // AJAX live search: return correct table only
+        // -------------------------
+        if ($request->ajax()) {
+            switch($request->col_2){
+                case 'pending':
+                    return view('documents.search', ['docs'=>$pendingDocuments, 'showForwardedBy'=>true])->render();
+                case 'forwarded':
+                    return view('documents.search', ['docs'=>$forwardedDocuments, 'showForwardedBy'=>true])->render();
+                case 'all':
+                    return view('documents.search', ['docs'=>$allDocuments, 'showForwardedBy'=>false])->render();
+            }
+        }
+
         return view('documents.index', compact(
-            'myDocuments',
-            'myCreatedDocuments',
-            'pendingDocuments',
-            'forwardedDocuments',
-            'allDocuments',
-            'sections',
-            'role',
-            'user'
+            'myDocuments','myCreatedDocuments','pendingDocuments',
+            'forwardedDocuments','allDocuments','sections','role','user'
         ));
     }
-
     public function create()
     {
         $user = Auth::user();
@@ -243,6 +261,7 @@ class DocumentController extends Controller
             DocumentAction::create([
                 'doc_id' => $document->doc_id,
                 'section_id' => $user->section_id,
+                'position_id' => $user->position_id,
                 'user_id' => $user->user_id,
                 'action_type' => 'CREATED',
                 'remarks' => 'Document created',

@@ -30,8 +30,8 @@
 
 /* STACKED CHART */
 .grid-stacked{
-    grid-column:2 / 5;
-    grid-row:3;
+    grid-column:1 / 5;
+    grid-row:4;
     background:#fff;
     padding:15px;
     border-radius:10px;
@@ -40,10 +40,10 @@
 
 /* LINE */
 .grid-line{
-    grid-column:1 / 5;
-    grid-row:4;
+    grid-column:2 / 5;
+    grid-row:3;
     background:#fff;
-    padding:15px 15px 70px;
+    padding:15px 15px 65px;
     border-radius:10px;
     height:350px;
 }
@@ -237,7 +237,6 @@
 ========================= */
 .reportx-card {
     background:white;
-    border-radius:16px;
     box-shadow:0 8px 25px rgba(0,0,0,0.06);
     border: 1px solid var(--main-color);
     overflow:hidden;

@@ -265,17 +265,23 @@ class ReportsController extends Controller
 
             if ($request->filled('filter_by') && $request->filled('dept_or_sec')) {
 
-                if ($request->filter_by === 'department') {
+                $value = $request->dept_or_sec;
 
-                    $sectionIds = Section::where('department_id', $request->dept_or_sec)
-                        ->pluck('section_id');
+                // ✅ If ALL → do not apply any department/section filter
+                if ($value !== 'all') {
 
-                    $query->whereIn('documents.current_section_id', $sectionIds);
-                }
+                    if ($request->filter_by === 'department') {
 
-                if ($request->filter_by === 'section') {
+                        $sectionIds = Section::where('department_id', $value)
+                            ->pluck('section_id');
 
-                    $query->where('documents.current_section_id', $request->dept_or_sec);
+                        $query->whereIn('documents.current_section_id', $sectionIds);
+                    }
+
+                    if ($request->filter_by === 'section') {
+
+                        $query->where('documents.current_section_id', $value);
+                    }
                 }
             }
         }
