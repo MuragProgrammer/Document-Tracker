@@ -58,16 +58,41 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact('documents', 'cardCounts'));
     }
-    // 🔥 REAL-TIME SEARCH ENDPOINT
+
     public function search(Request $request)
     {
+        $search = $request->input('search');
+        $status = $request->input('status');
+
         $documents = Document::with(['type', 'currentSection', 'currentHolder'])
-            ->where('document_number', 'like', '%' . $request->search . '%')
-            ->orWhere('document_name', 'like', '%' . $request->search . '%')
+            ->where('status', '!=', 'CREATED')
+            ->where('created_at', '>=', now()->subMonth())
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+
+                    // 🔍 Document fields
+                    $query->where('document_number', 'like', "%{$search}%")
+                        ->orWhere('document_name', 'like', "%{$search}%")
+
+                    // 🔍 Search in currentHolder (User)
+                        ->orWhereHas('currentHolder', function ($q2) use ($search) {
+                            $q2->whereRaw(
+                                "CONCAT(first_name, ' ', last_name) LIKE ?
+                                OR first_name LIKE ?
+                                OR last_name LIKE ?",
+                                ["%{$search}%", "%{$search}%", "%{$search}%"]
+                            );
+                        });
+
+                });
+            })
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            })
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
 
-        return view('dashboard.search', compact('documents'))->render();
+        return view('dashboard.search', compact('documents', 'search'))->render();
     }
 }

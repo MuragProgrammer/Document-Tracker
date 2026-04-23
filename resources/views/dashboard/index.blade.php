@@ -87,27 +87,26 @@
     {{-- Search & Status Filter (Admin only) --}}
     @if(auth()->user()->role === 'ADMIN')
     <div class="filters column-filter">
-        <form method="GET" action="{{ route('dashboard.index') }}">
-            <input
-                type="text"
-                name="search"
-                placeholder="Search by document number or name..."
-                class="search-input"
-                value="{{ request('search') }}"
-            />
-            <select name="status" class="status-select" onchange="this.form.submit()">
-                <option value="">All status</option>
-                <option value="PENDING" {{ request('status')=='PENDING'?'selected':'' }}>Pending Receipt</option>
-                <option value="UNDER REVIEW" {{ request('status')=='UNDER REVIEW'?'selected':'' }}>Under Review</option>
-                <option value="END OF CYCLE" {{ request('status')=='END OF CYCLE'?'selected':'' }}>End of cycle</option>
-                <option value="REOPENED" {{ request('status')=='REOPENED'?'selected':'' }}>Reopend</option>
-            </select>
-            <button type="submit" hidden></button>
-        </form>
+        <input
+            type="text"
+            id="dashboardSearch"
+            name="search"
+            placeholder="Search by document number or name..."
+            class="search-input"
+            value="{{ request('search') }}"
+        />
+        <select id="statusFilter" name="status" class="status-select" onchange="this.form.submit()">
+            <option value="">All status</option>
+            <option value="PENDING" {{ request('status')=='PENDING'?'selected':'' }}>Pending Receipt</option>
+            <option value="UNDER REVIEW" {{ request('status')=='UNDER REVIEW'?'selected':'' }}>Under Review</option>
+            <option value="END OF CYCLE" {{ request('status')=='END OF CYCLE'?'selected':'' }}>End of cycle</option>
+            <option value="REOPENED" {{ request('status')=='REOPENED'?'selected':'' }}>Reopend</option>
+        </select>
+        <button type="submit" hidden></button>
     </div>
     @endif
 
-    <table class="dashboard-table  ">
+    <table class="dashboard-table">
         <thead>
             <tr>
                 <th>Doc No.</th>
@@ -119,10 +118,12 @@
                 <th>Status</th>
             </tr>
         </thead>
-        <tbody>
-            @include('dashboard.search', ['documents' => $documents])
+
+        <tbody id="dashboardTableBody">
+            @include('dashboard.search', ['documents' => $documents, 'search' => request('search')])
         </tbody>
     </table>
+
     @if(
         auth()->user()->role === 'ADMIN' &&
         $documents instanceof \Illuminate\Pagination\AbstractPaginator
@@ -133,3 +134,36 @@
     @endif
 </div>
 @endsection
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput = document.getElementById('dashboardSearch');
+    const statusFilter = document.getElementById('statusFilter');
+
+    function fetchDocuments() {
+        let search = searchInput.value;
+        let status = statusFilter.value;
+
+        fetch(`{{ route('dashboard.search') }}?search=${search}&status=${status}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('dashboardTableBody').innerHTML = data;
+        })
+        .catch(err => console.error(err));
+    }
+
+    // debounce
+    let timer;
+    searchInput.addEventListener('keyup', function () {
+        clearTimeout(timer);
+        timer = setTimeout(fetchDocuments, 300);
+    });
+
+    statusFilter.addEventListener('change', fetchDocuments);
+
+});
+</script>
